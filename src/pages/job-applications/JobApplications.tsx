@@ -23,7 +23,7 @@ import { JobApplication, Job, Candidate } from '@/types'
 import { formatDate, getStatusColor } from '@/utils'
 
 export default function JobApplications() {
-  const { departments, designations } = useAppStore()
+  const { departments = [], designations = [] } = useAppStore() as any
   const [applications, setApplications] = useState<JobApplication[]>([])
   const [jobs, setJobs] = useState<Job[]>([])
   const [candidates, setCandidates] = useState<Candidate[]>([])
@@ -43,13 +43,69 @@ export default function JobApplications() {
   // Mock data - replace with API calls
   useEffect(() => {
     const mockJobs: Job[] = [
-      { id: '1', title: 'Senior Software Engineer', departmentId: '1', designationId: '1', description: '', requirements: '', location: 'New York', type: 'full-time', experience: '5+', salary: { min: 120000, max: 160000, currency: 'USD' }, status: 'active', openings: 2, createdAt: '', updatedAt: '' },
-      { id: '2', title: 'Product Manager', departmentId: '2', designationId: '2', description: '', requirements: '', location: 'SF', type: 'full-time', experience: '3+', salary: { min: 130000, max: 170000, currency: 'USD' }, status: 'active', openings: 1, createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        title: 'Senior Software Engineer',
+        departmentId: '1',
+        designationId: '1',
+        description: '',
+        requirements: '',
+        location: 'New York',
+        type: 'full-time',
+        experience: '5+',
+        salary: { min: 120000, max: 160000, currency: 'USD' },
+        status: 'active',
+        openings: 2,
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        title: 'Product Manager',
+        departmentId: '2',
+        designationId: '2',
+        description: '',
+        requirements: '',
+        location: 'SF',
+        type: 'full-time',
+        experience: '3+',
+        salary: { min: 130000, max: 170000, currency: 'USD' },
+        status: 'active',
+        openings: 1,
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockCandidates: Candidate[] = [
-      { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+1234567890', resume: 'resume1.pdf', skills: ['React', 'Node.js'], experience: 5, location: 'New York', expectedSalary: 140000, status: 'active', createdAt: '', updatedAt: '' },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com', phone: '+1234567891', resume: 'resume2.pdf', skills: ['PM', 'Agile'], experience: 4, location: 'SF', expectedSalary: 150000, status: 'active', createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '+1234567890',
+        resume: 'resume1.pdf',
+        skills: ['React', 'Node.js'],
+        experience: 5,
+        location: 'New York',
+        expectedSalary: 140000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        phone: '+1234567891',
+        resume: 'resume2.pdf',
+        skills: ['PM', 'Agile'],
+        experience: 4,
+        location: 'SF',
+        expectedSalary: 150000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockApplications: JobApplication[] = [
@@ -104,13 +160,14 @@ export default function JobApplications() {
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center">
             <span className="text-white text-sm font-medium">
-              {application.candidateName.split(' ').map(n => n[0]).join('')}
+              {application.candidateName
+                .split(' ')
+                .map(n => n[0])
+                .join('')}
             </span>
           </div>
           <div className="ml-3">
-            <div className="text-sm font-medium text-gray-900">
-              {application.candidateName}
-            </div>
+            <div className="text-sm font-medium text-gray-900">{application.candidateName}</div>
             <div className="text-sm text-gray-500">{application.candidateEmail}</div>
           </div>
         </div>
@@ -126,13 +183,15 @@ export default function JobApplications() {
             <div className="text-sm font-medium text-gray-900">{job.title}</div>
             <div className="text-sm text-gray-500">{job.location}</div>
           </div>
-        ) : 'N/A'
+        ) : (
+          'N/A'
+        )
       },
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => {
+      render: value => {
         const statusLabels = {
           applied: 'Applied',
           screening: 'Screening',
@@ -142,7 +201,9 @@ export default function JobApplications() {
           rejected: 'Rejected',
         }
         return (
-          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+          <span
+            className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}
+          >
             {statusLabels[value as keyof typeof statusLabels] || value}
           </span>
         )
@@ -151,12 +212,12 @@ export default function JobApplications() {
     {
       key: 'appliedAt',
       label: 'Applied Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'updatedAt',
       label: 'Last Updated',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
   ]
 
@@ -189,27 +250,33 @@ export default function JobApplications() {
   }
 
   const handleDeleteApplication = (application: JobApplication) => {
-    if (window.confirm(`Are you sure you want to delete ${application.candidateName}'s application?`)) {
+    if (
+      window.confirm(`Are you sure you want to delete ${application.candidateName}'s application?`)
+    ) {
       setApplications(prev => prev.filter(a => a.id !== application.id))
     }
   }
 
   const handleStatusChange = (application: JobApplication, newStatus: JobApplication['status']) => {
-    setApplications(prev => prev.map(a =>
-      a.id === application.id
-        ? { ...a, status: newStatus, updatedAt: new Date().toISOString() }
-        : a
-    ))
+    setApplications(prev =>
+      prev.map(a =>
+        a.id === application.id
+          ? { ...a, status: newStatus, updatedAt: new Date().toISOString() }
+          : a
+      )
+    )
   }
 
   const handleSubmit = () => {
     if (editingApplication) {
       // Update existing application
-      setApplications(prev => prev.map(a =>
-        a.id === editingApplication.id
-          ? { ...a, ...formData, updatedAt: new Date().toISOString() }
-          : a
-      ))
+      setApplications(prev =>
+        prev.map(a =>
+          a.id === editingApplication.id
+            ? { ...a, ...formData, updatedAt: new Date().toISOString() }
+            : a
+        )
+      )
     } else {
       // Add new application
       const newApplication: JobApplication = {
@@ -244,10 +311,13 @@ export default function JobApplications() {
 
   // Statistics
   const totalApplications = applications.length
-  const applicationsByStatus = applications.reduce((acc, app) => {
-    acc[app.status] = (acc[app.status] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
+  const applicationsByStatus = applications.reduce(
+    (acc, app) => {
+      acc[app.status] = (acc[app.status] || 0) + 1
+      return acc
+    },
+    {} as Record<string, number>
+  )
 
   const recentApplications = applications
     .sort((a, b) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime())
@@ -286,12 +356,8 @@ export default function JobApplications() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Total Applications
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {totalApplications}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Total Applications</dt>
+                <dd className="text-lg font-medium text-gray-900">{totalApplications}</dd>
               </dl>
             </div>
           </div>
@@ -308,9 +374,7 @@ export default function JobApplications() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Applied
-                </dt>
+                <dt className="text-sm font-medium text-gray-500 truncate">Applied</dt>
                 <dd className="text-lg font-medium text-gray-900">
                   {applicationsByStatus.applied || 0}
                 </dd>
@@ -330,9 +394,7 @@ export default function JobApplications() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  In Interview
-                </dt>
+                <dt className="text-sm font-medium text-gray-500 truncate">In Interview</dt>
                 <dd className="text-lg font-medium text-gray-900">
                   {applicationsByStatus.interview || 0}
                 </dd>
@@ -352,9 +414,7 @@ export default function JobApplications() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Hired
-                </dt>
+                <dt className="text-sm font-medium text-gray-500 truncate">Hired</dt>
                 <dd className="text-lg font-medium text-gray-900">
                   {applicationsByStatus.hired || 0}
                 </dd>
@@ -374,19 +434,17 @@ export default function JobApplications() {
           filterable
           sortable
           pagination={{ enabled: true }}
-          actions={(application) => (
+          actions={application => (
             <div className="flex items-center space-x-2">
               <Select
                 value={application.status}
-                onChange={(value) => handleStatusChange(application, value as JobApplication['status'])}
+                onChange={value =>
+                  handleStatusChange(application, value as JobApplication['status'])
+                }
                 options={statusOptions}
                 className="w-32"
               />
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditApplication(application)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleEditApplication(application)}>
                 <PencilIcon className="h-4 w-4" />
               </Button>
               <Button
@@ -406,25 +464,34 @@ export default function JobApplications() {
       <div className="card">
         <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Applications</h3>
         <div className="space-y-3">
-          {recentApplications.map((application) => {
+          {recentApplications.map(application => {
             const job = jobs.find(j => j.id === application.jobId)
             return (
-              <div key={application.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div
+                key={application.id}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+              >
                 <div className="flex items-center space-x-3">
                   <div className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center">
                     <span className="text-white text-sm font-medium">
-                      {application.candidateName.split(' ').map(n => n[0]).join('')}
+                      {application.candidateName
+                        .split(' ')
+                        .map(n => n[0])
+                        .join('')}
                     </span>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">{application.candidateName}</p>
                     <p className="text-sm text-gray-500">
-                      Applied for {job?.title || 'Unknown Position'} • {formatDate(application.appliedAt)}
+                      Applied for {job?.title || 'Unknown Position'} •{' '}
+                      {formatDate(application.appliedAt)}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(application.status)}`}>
+                  <span
+                    className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(application.status)}`}
+                  >
                     {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
                   </span>
                   <Button variant="ghost" size="sm">
@@ -449,7 +516,7 @@ export default function JobApplications() {
             label="Job Position"
             options={jobOptions}
             value={formData.jobId}
-            onChange={(value) => setFormData(prev => ({ ...prev, jobId: value }))}
+            onChange={value => setFormData(prev => ({ ...prev, jobId: value }))}
             placeholder="Select a job position"
             required
           />
@@ -458,7 +525,7 @@ export default function JobApplications() {
             <Input
               label="Candidate Name"
               value={formData.candidateName}
-              onChange={(e) => setFormData(prev => ({ ...prev, candidateName: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, candidateName: e.target.value }))}
               placeholder="John Doe"
               required
             />
@@ -467,7 +534,7 @@ export default function JobApplications() {
               label="Email"
               type="email"
               value={formData.candidateEmail}
-              onChange={(e) => setFormData(prev => ({ ...prev, candidateEmail: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, candidateEmail: e.target.value }))}
               placeholder="john@example.com"
               required
             />
@@ -476,7 +543,7 @@ export default function JobApplications() {
           <Input
             label="Phone"
             value={formData.candidatePhone}
-            onChange={(e) => setFormData(prev => ({ ...prev, candidatePhone: e.target.value }))}
+            onChange={e => setFormData(prev => ({ ...prev, candidatePhone: e.target.value }))}
             placeholder="+1 (555) 123-4567"
             required
           />
@@ -484,20 +551,18 @@ export default function JobApplications() {
           <Input
             label="Resume"
             value={formData.resume}
-            onChange={(e) => setFormData(prev => ({ ...prev, resume: e.target.value }))}
+            onChange={e => setFormData(prev => ({ ...prev, resume: e.target.value }))}
             placeholder="resume.pdf or link to resume"
             required
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Cover Letter
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Cover Letter</label>
             <textarea
               className="input w-full h-32 resize-none"
               placeholder="Candidate's cover letter..."
               value={formData.coverLetter}
-              onChange={(e) => setFormData(prev => ({ ...prev, coverLetter: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, coverLetter: e.target.value }))}
             />
           </div>
 
@@ -505,7 +570,7 @@ export default function JobApplications() {
             label="Status"
             options={statusOptions}
             value={formData.status}
-            onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
+            onChange={value => setFormData(prev => ({ ...prev, status: value as any }))}
             required
           />
         </div>

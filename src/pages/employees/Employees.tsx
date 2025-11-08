@@ -19,7 +19,7 @@ import { Employee, Department, Designation } from '@/types'
 import { formatDate, getInitials, getStatusColor } from '@/utils'
 
 export default function Employees() {
-  const { departments, designations } = useAppStore()
+  const { departments = [], designations = [] } = useAppStore() as any
   const [employees, setEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -217,12 +217,12 @@ export default function Employees() {
     // In real implementation, this would export to CSV/Excel
   }
 
-  const departmentOptions = departments.map(dept => ({
+  const departmentOptions = (departments || []).map(dept => ({
     value: dept.id,
     label: dept.name,
   }))
 
-  const designationOptions = designations.map(designation => ({
+  const designationOptions = (designations || []).map(designation => ({
     value: designation.id,
     label: designation.title,
   }))

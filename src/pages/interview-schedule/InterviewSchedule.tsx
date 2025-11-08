@@ -21,7 +21,7 @@ import { Interview, JobApplication, Candidate, Job } from '@/types'
 import { formatDate, formatDateTime, getStatusColor } from '@/utils'
 
 export default function InterviewSchedule() {
-  const { employees } = useAppStore()
+  const { employees = [] } = useAppStore() as any
   const [interviews, setInterviews] = useState<Interview[]>([])
   const [jobs, setJobs] = useState<Job[]>([])
   const [applications, setApplications] = useState<JobApplication[]>([])
@@ -46,18 +46,96 @@ export default function InterviewSchedule() {
   // Mock data - replace with API calls
   useEffect(() => {
     const mockJobs: Job[] = [
-      { id: '1', title: 'Senior Software Engineer', departmentId: '1', designationId: '1', description: '', requirements: '', location: 'New York', type: 'full-time', experience: '5+', salary: { min: 120000, max: 160000, currency: 'USD' }, status: 'active', openings: 2, createdAt: '', updatedAt: '' },
-      { id: '2', title: 'Product Manager', departmentId: '2', designationId: '2', description: '', requirements: '', location: 'SF', type: 'full-time', experience: '3+', salary: { min: 130000, max: 170000, currency: 'USD' }, status: 'active', openings: 1, createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        title: 'Senior Software Engineer',
+        departmentId: '1',
+        designationId: '1',
+        description: '',
+        requirements: '',
+        location: 'New York',
+        type: 'full-time',
+        experience: '5+',
+        salary: { min: 120000, max: 160000, currency: 'USD' },
+        status: 'active',
+        openings: 2,
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        title: 'Product Manager',
+        departmentId: '2',
+        designationId: '2',
+        description: '',
+        requirements: '',
+        location: 'SF',
+        type: 'full-time',
+        experience: '3+',
+        salary: { min: 130000, max: 170000, currency: 'USD' },
+        status: 'active',
+        openings: 1,
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockCandidates: Candidate[] = [
-      { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+1234567890', resume: 'resume1.pdf', skills: ['React', 'Node.js'], experience: 5, location: 'New York', expectedSalary: 140000, status: 'active', createdAt: '', updatedAt: '' },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com', phone: '+1234567891', resume: 'resume2.pdf', skills: ['PM', 'Agile'], experience: 4, location: 'SF', expectedSalary: 150000, status: 'active', createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '+1234567890',
+        resume: 'resume1.pdf',
+        skills: ['React', 'Node.js'],
+        experience: 5,
+        location: 'New York',
+        expectedSalary: 140000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        phone: '+1234567891',
+        resume: 'resume2.pdf',
+        skills: ['PM', 'Agile'],
+        experience: 4,
+        location: 'SF',
+        expectedSalary: 150000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockApplications: JobApplication[] = [
-      { id: '1', jobId: '1', candidateName: 'John Doe', candidateEmail: 'john@example.com', candidatePhone: '+1234567890', resume: 'resume1.pdf', coverLetter: '', status: 'interview', appliedAt: '', updatedAt: '' },
-      { id: '2', jobId: '2', candidateName: 'Jane Smith', candidateEmail: 'jane@example.com', candidatePhone: '+1234567891', resume: 'resume2.pdf', coverLetter: '', status: 'interview', appliedAt: '', updatedAt: '' },
+      {
+        id: '1',
+        jobId: '1',
+        candidateName: 'John Doe',
+        candidateEmail: 'john@example.com',
+        candidatePhone: '+1234567890',
+        resume: 'resume1.pdf',
+        coverLetter: '',
+        status: 'interview',
+        appliedAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        jobId: '2',
+        candidateName: 'Jane Smith',
+        candidateEmail: 'jane@example.com',
+        candidatePhone: '+1234567891',
+        resume: 'resume2.pdf',
+        coverLetter: '',
+        status: 'interview',
+        appliedAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockInterviews: Interview[] = [
@@ -127,17 +205,20 @@ export default function InterviewSchedule() {
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center">
               <span className="text-white text-xs font-medium">
-                {candidate.name.split(' ').map(n => n[0]).join('')}
+                {candidate.name
+                  .split(' ')
+                  .map(n => n[0])
+                  .join('')}
               </span>
             </div>
             <div className="ml-2">
-              <div className="text-sm font-medium text-gray-900">
-                {candidate.name}
-              </div>
+              <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
               <div className="text-sm text-gray-500">{candidate.email}</div>
             </div>
           </div>
-        ) : 'Unknown Candidate'
+        ) : (
+          'Unknown Candidate'
+        )
       },
     },
     {
@@ -151,7 +232,9 @@ export default function InterviewSchedule() {
             <div className="text-sm font-medium text-gray-900">{job.title}</div>
             <div className="text-sm text-gray-500">{job.location}</div>
           </div>
-        ) : 'Unknown Position'
+        ) : (
+          'Unknown Position'
+        )
       },
     },
     {
@@ -166,30 +249,28 @@ export default function InterviewSchedule() {
             </div>
             <div className="text-sm text-gray-500">{interviewer.email}</div>
           </div>
-        ) : 'Unknown Interviewer'
+        ) : (
+          'Unknown Interviewer'
+        )
       },
     },
     {
       key: 'scheduledAt',
       label: 'Date & Time',
-      render: (value) => (
+      render: value => (
         <div>
-          <div className="text-sm text-gray-900">
-            {formatDate(value)}
-          </div>
-          <div className="text-sm text-gray-500">
-            {formatDateTime(value).split(', ')[1]}
-          </div>
+          <div className="text-sm text-gray-900">{formatDate(value)}</div>
+          <div className="text-sm text-gray-500">{formatDateTime(value).split(', ')[1]}</div>
         </div>
       ),
     },
     {
       key: 'type',
       label: 'Type',
-      render: (value) => {
+      render: value => {
         const icons = {
-          'video': VideoCameraIcon,
-          'phone': UserIcon,
+          video: VideoCameraIcon,
+          phone: UserIcon,
           'in-person': MapPinIcon,
         }
         const Icon = icons[value as keyof typeof icons] || VideoCameraIcon
@@ -204,13 +285,15 @@ export default function InterviewSchedule() {
     {
       key: 'duration',
       label: 'Duration',
-      render: (value) => `${value} min`,
+      render: value => `${value} min`,
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+      render: value => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}
+        >
           {value?.charAt(0).toUpperCase() + value?.slice(1)}
         </span>
       ),
@@ -218,19 +301,22 @@ export default function InterviewSchedule() {
     {
       key: 'rating',
       label: 'Rating',
-      render: (value) => value ? (
-        <div className="flex items-center">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span
-              key={i}
-              className={`text-sm ${i < value ? 'text-yellow-400' : 'text-gray-300'}`}
-            >
-              ★
-            </span>
-          ))}
-          <span className="ml-1 text-sm text-gray-500">({value}/5)</span>
-        </div>
-      ) : '-',
+      render: value =>
+        value ? (
+          <div className="flex items-center">
+            {Array.from({ length: 5 }, (_, i) => (
+              <span
+                key={i}
+                className={`text-sm ${i < value ? 'text-yellow-400' : 'text-gray-300'}`}
+              >
+                ★
+              </span>
+            ))}
+            <span className="ml-1 text-sm text-gray-500">({value}/5)</span>
+          </div>
+        ) : (
+          '-'
+        ),
     },
   ]
 
@@ -275,44 +361,50 @@ export default function InterviewSchedule() {
     const rating = parseInt(prompt('Rate the candidate (1-5):') || '0')
 
     if (feedback !== null) {
-      setInterviews(prev => prev.map(i =>
-        i.id === interview.id
-          ? {
-              ...i,
-              status: 'completed',
-              feedback,
-              rating: rating || 0,
-              updatedAt: new Date().toISOString()
-            }
-          : i
-      ))
+      setInterviews(prev =>
+        prev.map(i =>
+          i.id === interview.id
+            ? {
+                ...i,
+                status: 'completed',
+                feedback,
+                rating: rating || 0,
+                updatedAt: new Date().toISOString(),
+              }
+            : i
+        )
+      )
     }
   }
 
   const handleCancelInterview = (interview: Interview) => {
     const reason = prompt('Please provide a reason for cancellation:')
     if (reason !== null && window.confirm('Are you sure you want to cancel this interview?')) {
-      setInterviews(prev => prev.map(i =>
-        i.id === interview.id
-          ? {
-              ...i,
-              status: 'cancelled',
-              feedback: reason,
-              updatedAt: new Date().toISOString()
-            }
-          : i
-      ))
+      setInterviews(prev =>
+        prev.map(i =>
+          i.id === interview.id
+            ? {
+                ...i,
+                status: 'cancelled',
+                feedback: reason,
+                updatedAt: new Date().toISOString(),
+              }
+            : i
+        )
+      )
     }
   }
 
   const handleSubmit = () => {
     if (editingInterview) {
       // Update existing interview
-      setInterviews(prev => prev.map(i =>
-        i.id === editingInterview.id
-          ? { ...i, ...formData, updatedAt: new Date().toISOString() }
-          : i
-      ))
+      setInterviews(prev =>
+        prev.map(i =>
+          i.id === editingInterview.id
+            ? { ...i, ...formData, updatedAt: new Date().toISOString() }
+            : i
+        )
+      )
     } else {
       // Add new interview
       const newInterview: Interview = {
@@ -331,7 +423,7 @@ export default function InterviewSchedule() {
     // In real implementation, this would export to CSV/Excel
   }
 
-  const applicationOptions = applications.map(application => {
+  const applicationOptions = (applications || []).map(application => {
     const job = jobs.find(j => j.id === application.jobId)
     const candidate = candidates.find(c => c.id === application.candidateId)
     return {
@@ -340,12 +432,12 @@ export default function InterviewSchedule() {
     }
   })
 
-  const candidateOptions = candidates.map(candidate => ({
+  const candidateOptions = (candidates || []).map(candidate => ({
     value: candidate.id,
     label: candidate.name,
   }))
 
-  const interviewerOptions = employees.map(employee => ({
+  const interviewerOptions = (employees || []).map(employee => ({
     value: employee.id,
     label: `${employee.firstName} ${employee.lastName}`,
   }))
@@ -354,9 +446,11 @@ export default function InterviewSchedule() {
   const totalInterviews = interviews.length
   const scheduledInterviews = interviews.filter(i => i.status === 'scheduled')
   const completedInterviews = interviews.filter(i => i.status === 'completed')
-  const averageRating = completedInterviews.length > 0
-    ? completedInterviews.reduce((sum, i) => sum + (i.rating || 0), 0) / completedInterviews.length
-    : 0
+  const averageRating =
+    completedInterviews.length > 0
+      ? completedInterviews.reduce((sum, i) => sum + (i.rating || 0), 0) /
+        completedInterviews.length
+      : 0
 
   const upcomingInterviews = scheduledInterviews.filter(i => {
     const interviewDate = new Date(i.scheduledAt)
@@ -398,12 +492,8 @@ export default function InterviewSchedule() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Total Interviews
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {totalInterviews}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Total Interviews</dt>
+                <dd className="text-lg font-medium text-gray-900">{totalInterviews}</dd>
               </dl>
             </div>
           </div>
@@ -416,12 +506,8 @@ export default function InterviewSchedule() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Scheduled
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {scheduledInterviews.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Scheduled</dt>
+                <dd className="text-lg font-medium text-gray-900">{scheduledInterviews.length}</dd>
               </dl>
             </div>
           </div>
@@ -434,12 +520,8 @@ export default function InterviewSchedule() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Completed
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {completedInterviews.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Completed</dt>
+                <dd className="text-lg font-medium text-gray-900">{completedInterviews.length}</dd>
               </dl>
             </div>
           </div>
@@ -456,12 +538,8 @@ export default function InterviewSchedule() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Avg Rating
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {averageRating.toFixed(1)}/5
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Avg Rating</dt>
+                <dd className="text-lg font-medium text-gray-900">{averageRating.toFixed(1)}/5</dd>
               </dl>
             </div>
           </div>
@@ -504,7 +582,7 @@ export default function InterviewSchedule() {
           filterable
           sortable
           pagination={{ enabled: true }}
-          actions={(interview) => (
+          actions={interview => (
             <div className="flex items-center space-x-2">
               {interview.status === 'scheduled' && (
                 <>
@@ -526,11 +604,7 @@ export default function InterviewSchedule() {
                   </Button>
                 </>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditInterview(interview)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleEditInterview(interview)}>
                 <PencilIcon className="h-4 w-4" />
               </Button>
             </div>
@@ -551,9 +625,11 @@ export default function InterviewSchedule() {
             label="Job Application"
             options={applicationOptions}
             value={formData.jobApplicationId}
-            onChange={(value) => {
+            onChange={value => {
               const application = applications.find(a => a.id === value)
-              const candidate = application ? candidates.find(c => c.id === application.candidateId) : null
+              const candidate = application
+                ? candidates.find(c => c.id === application.candidateId)
+                : null
               setFormData(prev => ({
                 ...prev,
                 jobApplicationId: value,
@@ -569,7 +645,7 @@ export default function InterviewSchedule() {
               label="Candidate"
               options={candidateOptions}
               value={formData.candidateId}
-              onChange={(value) => setFormData(prev => ({ ...prev, candidateId: value }))}
+              onChange={value => setFormData(prev => ({ ...prev, candidateId: value }))}
               placeholder="Select candidate"
               required
               disabled
@@ -579,7 +655,7 @@ export default function InterviewSchedule() {
               label="Interviewer"
               options={interviewerOptions}
               value={formData.interviewerId}
-              onChange={(value) => setFormData(prev => ({ ...prev, interviewerId: value }))}
+              onChange={value => setFormData(prev => ({ ...prev, interviewerId: value }))}
               placeholder="Select interviewer"
               required
             />
@@ -590,7 +666,7 @@ export default function InterviewSchedule() {
               label="Date & Time"
               type="datetime-local"
               value={formData.scheduledAt}
-              onChange={(e) => setFormData(prev => ({ ...prev, scheduledAt: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, scheduledAt: e.target.value }))}
               required
             />
 
@@ -598,7 +674,7 @@ export default function InterviewSchedule() {
               label="Duration (minutes)"
               type="number"
               value={formData.duration.toString()}
-              onChange={(e) => setFormData(prev => ({ ...prev, duration: Number(e.target.value) }))}
+              onChange={e => setFormData(prev => ({ ...prev, duration: Number(e.target.value) }))}
               min="15"
               max="240"
               required
@@ -613,7 +689,7 @@ export default function InterviewSchedule() {
               { value: 'in-person', label: 'In-Person' },
             ]}
             value={formData.type}
-            onChange={(value) => setFormData(prev => ({ ...prev, type: value as any }))}
+            onChange={value => setFormData(prev => ({ ...prev, type: value as any }))}
             required
           />
 
@@ -621,7 +697,7 @@ export default function InterviewSchedule() {
             <Input
               label="Location"
               value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, location: e.target.value }))}
               placeholder="Conference room, address, etc."
               required
             />
@@ -631,7 +707,7 @@ export default function InterviewSchedule() {
             <Input
               label="Meeting Link"
               value={formData.meetingLink}
-              onChange={(e) => setFormData(prev => ({ ...prev, meetingLink: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, meetingLink: e.target.value }))}
               placeholder="https://meet.google.com/... or Zoom link"
               required
             />
@@ -648,21 +724,19 @@ export default function InterviewSchedule() {
                   { value: 'rescheduled', label: 'Rescheduled' },
                 ]}
                 value={formData.status}
-                onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
+                onChange={value => setFormData(prev => ({ ...prev, status: value as any }))}
                 required
               />
 
               {formData.status === 'completed' && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Feedback
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Feedback</label>
                     <textarea
                       className="input w-full h-24 resize-none"
                       placeholder="Provide detailed feedback about the candidate..."
                       value={formData.feedback}
-                      onChange={(e) => setFormData(prev => ({ ...prev, feedback: e.target.value }))}
+                      onChange={e => setFormData(prev => ({ ...prev, feedback: e.target.value }))}
                     />
                   </div>
 
@@ -671,7 +745,7 @@ export default function InterviewSchedule() {
                       Rating (1-5)
                     </label>
                     <div className="flex items-center space-x-2">
-                      {[1, 2, 3, 4, 5].map((star) => (
+                      {[1, 2, 3, 4, 5].map(star => (
                         <button
                           key={star}
                           type="button"
@@ -681,9 +755,7 @@ export default function InterviewSchedule() {
                           ★
                         </button>
                       ))}
-                      <span className="ml-2 text-sm text-gray-500">
-                        {formData.rating}/5
-                      </span>
+                      <span className="ml-2 text-sm text-gray-500">{formData.rating}/5</span>
                     </div>
                   </div>
                 </>

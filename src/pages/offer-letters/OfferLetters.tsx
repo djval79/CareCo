@@ -23,7 +23,7 @@ import { OfferLetter, JobApplication, Candidate, Job } from '@/types'
 import { formatDate, formatCurrency, getStatusColor } from '@/utils'
 
 export default function OfferLetters() {
-  const { employees } = useAppStore()
+  const { employees = [] } = useAppStore() as any
   const [offerLetters, setOfferLetters] = useState<OfferLetter[]>([])
   const [jobs, setJobs] = useState<Job[]>([])
   const [applications, setApplications] = useState<JobApplication[]>([])
