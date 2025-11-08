@@ -50,7 +50,10 @@ export const formatRelativeTime = (date: string | Date): string => {
   }
 }
 
-export const calculateDaysDifference = (startDate: string | Date, endDate: string | Date): number => {
+export const calculateDaysDifference = (
+  startDate: string | Date,
+  endDate: string | Date
+): number => {
   const start = new Date(startDate)
   const end = new Date(endDate)
   const diffInMs = end.getTime() - start.getTime()
@@ -85,17 +88,17 @@ export const validateEmail = (email: string): boolean => {
 }
 
 export const validatePhone = (phone: string): boolean => {
-  const phoneRegex = /^\+?[\d\s\-\(\)]+$/
+  const phoneRegex = /^\+?[\d\s\-()]+$/
   return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 10
 }
 
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes'
-  
+
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  
+
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
@@ -135,7 +138,7 @@ export const debounce = <T extends (...args: any[]) => any>(
   delay: number
 ): ((...args: Parameters<T>) => void) => {
   let timeoutId: ReturnType<typeof setTimeout>
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId)
     timeoutId = setTimeout(() => func(...args), delay)
@@ -147,7 +150,7 @@ export const throttle = <T extends (...args: any[]) => any>(
   delay: number
 ): ((...args: Parameters<T>) => void) => {
   let lastCall = 0
-  
+
   return (...args: Parameters<T>) => {
     const now = Date.now()
     if (now - lastCall >= delay) {
@@ -157,39 +160,32 @@ export const throttle = <T extends (...args: any[]) => any>(
   }
 }
 
-export const sortBy = <T>(
-  array: T[],
-  key: keyof T,
-  order: 'asc' | 'desc' = 'asc'
-): T[] => {
+export const sortBy = <T>(array: T[], key: keyof T, order: 'asc' | 'desc' = 'asc'): T[] => {
   return [...array].sort((a, b) => {
     const aVal = a[key]
     const bVal = b[key]
-    
+
     if (aVal < bVal) return order === 'asc' ? -1 : 1
     if (aVal > bVal) return order === 'asc' ? 1 : -1
     return 0
   })
 }
 
-export const groupBy = <T, K extends keyof T>(
-  array: T[],
-  key: K
-): Record<string, T[]> => {
-  return array.reduce((groups, item) => {
-    const group = String(item[key])
-    if (!groups[group]) {
-      groups[group] = []
-    }
-    groups[group].push(item)
-    return groups
-  }, {} as Record<string, T[]>)
+export const groupBy = <T, K extends keyof T>(array: T[], key: K): Record<string, T[]> => {
+  return array.reduce(
+    (groups, item) => {
+      const group = String(item[key])
+      if (!groups[group]) {
+        groups[group] = []
+      }
+      groups[group].push(item)
+      return groups
+    },
+    {} as Record<string, T[]>
+  )
 }
 
-export const uniqueBy = <T, K extends keyof T>(
-  array: T[],
-  key: K
-): T[] => {
+export const uniqueBy = <T, K extends keyof T>(array: T[], key: K): T[] => {
   const seen = new Set()
   return array.filter(item => {
     const value = item[key]
@@ -220,10 +216,10 @@ export const deepClone = <T>(obj: T): T => {
   if (obj === null || typeof obj !== 'object') return obj
   if (obj instanceof Date) return new Date(obj.getTime()) as any
   if (Array.isArray(obj)) return obj.map(deepClone) as any
-  
+
   const cloned: any = {}
   for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
       cloned[key] = deepClone(obj[key])
     }
   }
@@ -251,29 +247,29 @@ export const getStatusColor = (status: string): string => {
     late: 'bg-yellow-100 text-yellow-800',
     'half-day': 'bg-orange-100 text-orange-800',
   }
-  
+
   return statusColors[status.toLowerCase()] || 'bg-gray-100 text-gray-800'
 }
 
 export const exportToCSV = (data: any[], filename: string): void => {
   if (data.length === 0) return
-  
+
   const headers = Object.keys(data[0])
   const csvContent = [
     headers.join(','),
-    ...data.map(row => 
-      headers.map(header => {
-        const value = row[header]
-        return typeof value === 'string' && value.includes(',') 
-          ? `"${value}"` 
-          : value
-      }).join(',')
-    )
+    ...data.map(row =>
+      headers
+        .map(header => {
+          const value = row[header]
+          return typeof value === 'string' && value.includes(',') ? `"${value}"` : value
+        })
+        .join(',')
+    ),
   ].join('\n')
-  
+
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
   const link = document.createElement('a')
-  
+
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob)
     link.setAttribute('href', url)

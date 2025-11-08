@@ -3,12 +3,20 @@ import { io, Socket } from 'socket.io-client'
 interface ServerToClientEvents {
   'notification:new': (notification: any) => void
   'leave:updated': (data: { leaveId: string; status: string; updatedBy: string }) => void
-  'interview:scheduled': (data: { interviewId: string; candidateId: string; scheduledAt: string }) => void
+  'interview:scheduled': (data: {
+    interviewId: string
+    candidateId: string
+    scheduledAt: string
+  }) => void
   'offer:sent': (data: { offerId: string; candidateId: string }) => void
   'attendance:checked-in': (data: { employeeId: string; timestamp: string }) => void
   'user:online': (data: { userId: string; status: 'online' | 'offline' }) => void
   'job:updated': (data: { jobId: string; action: string; updatedBy: string }) => void
-  'application:updated': (data: { applicationId: string; status: string; updatedBy: string }) => void
+  'application:updated': (data: {
+    applicationId: string
+    status: string
+    updatedBy: string
+  }) => void
 }
 
 interface ClientToServerEvents {
@@ -24,7 +32,7 @@ class WebSocketService {
   private reconnectAttempts = 0
   private maxReconnectAttempts = 5
   private reconnectDelay = 1000
-  private eventListeners: Map<string, Function[]> = new Map()
+  private eventListeners: Map<string, ((...args: unknown[]) => void)[]> = new Map()
 
   constructor() {
     this.connect()
@@ -36,7 +44,7 @@ class WebSocketService {
 
     this.socket = io(wsUrl, {
       auth: {
-        token
+        token,
       },
       transports: ['websocket', 'polling'],
       timeout: 20000,
@@ -56,46 +64,46 @@ class WebSocketService {
       this.emit('connected')
     })
 
-    this.socket.on('disconnect', (reason) => {
+    this.socket.on('disconnect', reason => {
       console.log('WebSocket disconnected:', reason)
       this.emit('disconnected', reason)
     })
 
-    this.socket.on('connect_error', (error) => {
+    this.socket.on('connect_error', error => {
       console.error('WebSocket connection error:', error)
       this.emit('connection_error', error)
     })
 
     // Business event listeners
-    this.socket.on('notification:new', (notification) => {
+    this.socket.on('notification:new', notification => {
       this.emit('notification:new', notification)
     })
 
-    this.socket.on('leave:updated', (data) => {
+    this.socket.on('leave:updated', data => {
       this.emit('leave:updated', data)
     })
 
-    this.socket.on('interview:scheduled', (data) => {
+    this.socket.on('interview:scheduled', data => {
       this.emit('interview:scheduled', data)
     })
 
-    this.socket.on('offer:sent', (data) => {
+    this.socket.on('offer:sent', data => {
       this.emit('offer:sent', data)
     })
 
-    this.socket.on('attendance:checked-in', (data) => {
+    this.socket.on('attendance:checked-in', data => {
       this.emit('attendance:checked-in', data)
     })
 
-    this.socket.on('user:online', (data) => {
+    this.socket.on('user:online', data => {
       this.emit('user:online', data)
     })
 
-    this.socket.on('job:updated', (data) => {
+    this.socket.on('job:updated', data => {
       this.emit('job:updated', data)
     })
 
-    this.socket.on('application:updated', (data) => {
+    this.socket.on('application:updated', data => {
       this.emit('application:updated', data)
     })
   }
@@ -107,7 +115,9 @@ class WebSocketService {
       if (this.reconnectAttempts < this.maxReconnectAttempts) {
         setTimeout(() => {
           this.reconnectAttempts++
-          console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`)
+          console.log(
+            `Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`
+          )
           this.connect()
         }, this.reconnectDelay * this.reconnectAttempts)
       }
@@ -115,7 +125,7 @@ class WebSocketService {
   }
 
   // Event system for React components
-  on(event: string, callback: Function) {
+  on(event: string, callback: (...args: unknown[]) => void) {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, [])
     }
@@ -197,7 +207,7 @@ export function useWebSocket() {
     }
   }, [])
 
-  const subscribe = (event: string, callback: Function) => {
+  const subscribe = (event: string, callback: (...args: unknown[]) => void) => {
     if (unsubscribeRef.current) {
       unsubscribeRef.current()
     }
