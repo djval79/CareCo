@@ -48,18 +48,100 @@ export default function OfferLetters() {
   // Mock data - replace with API calls
   useEffect(() => {
     const mockJobs: Job[] = [
-      { id: '1', title: 'Senior Software Engineer', departmentId: '1', designationId: '1', description: '', requirements: '', location: 'New York', type: 'full-time', experience: '5+', salary: { min: 120000, max: 160000, currency: 'USD' }, status: 'active', openings: 2, createdAt: '', updatedAt: '' },
-      { id: '2', title: 'Product Manager', departmentId: '2', designationId: '2', description: '', requirements: '', location: 'SF', type: 'full-time', experience: '3+', salary: { min: 130000, max: 170000, currency: 'USD' }, status: 'active', openings: 1, createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        title: 'Senior Software Engineer',
+        departmentId: '1',
+        designationId: '1',
+        description: '',
+        requirements: '',
+        location: 'New York',
+        type: 'full-time',
+        experience: '5+',
+        salary: { min: 120000, max: 160000, currency: 'USD' },
+        status: 'active',
+        openings: 2,
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        title: 'Product Manager',
+        departmentId: '2',
+        designationId: '2',
+        description: '',
+        requirements: '',
+        location: 'SF',
+        type: 'full-time',
+        experience: '3+',
+        salary: { min: 130000, max: 170000, currency: 'USD' },
+        status: 'active',
+        openings: 1,
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockCandidates: Candidate[] = [
-      { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+1234567890', resume: 'resume1.pdf', skills: ['React', 'Node.js'], experience: 5, location: 'New York', expectedSalary: 140000, status: 'active', createdAt: '', updatedAt: '' },
-      { id: '2', name: 'Jane Smith', email: 'jane@example.com', phone: '+1234567891', resume: 'resume2.pdf', skills: ['PM', 'Agile'], experience: 4, location: 'SF', expectedSalary: 150000, status: 'active', createdAt: '', updatedAt: '' },
+      {
+        id: '1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '+1234567890',
+        resume: 'resume1.pdf',
+        skills: ['React', 'Node.js'],
+        experience: 5,
+        location: 'New York',
+        expectedSalary: 140000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        phone: '+1234567891',
+        resume: 'resume2.pdf',
+        skills: ['PM', 'Agile'],
+        experience: 4,
+        location: 'SF',
+        expectedSalary: 150000,
+        status: 'active',
+        createdAt: '',
+        updatedAt: '',
+      },
     ]
 
     const mockApplications: JobApplication[] = [
-      { id: '1', jobId: '1', candidateName: 'John Doe', candidateEmail: 'john@example.com', candidatePhone: '+1234567890', resume: 'resume1.pdf', coverLetter: '', status: 'interview', appliedAt: '', updatedAt: '', source: '', createdAt: '' },
-      { id: '2', jobId: '2', candidateName: 'Jane Smith', candidateEmail: 'jane@example.com', candidatePhone: '+1234567891', resume: 'resume2.pdf', coverLetter: '', status: 'interview', appliedAt: '', updatedAt: '', source: '', createdAt: '' },
+      {
+        id: '1',
+        jobId: '1',
+        candidateName: 'John Doe',
+        candidateEmail: 'john@example.com',
+        candidatePhone: '+1234567890',
+        resume: 'resume1.pdf',
+        coverLetter: '',
+        status: 'interview',
+        appliedAt: '',
+        updatedAt: '',
+        source: '',
+        createdAt: '',
+      },
+      {
+        id: '2',
+        jobId: '2',
+        candidateName: 'Jane Smith',
+        candidateEmail: 'jane@example.com',
+        candidatePhone: '+1234567891',
+        resume: 'resume2.pdf',
+        coverLetter: '',
+        status: 'interview',
+        appliedAt: '',
+        updatedAt: '',
+        source: '',
+        createdAt: '',
+      },
     ]
 
     const mockOffers: OfferLetter[] = [
@@ -129,17 +211,20 @@ export default function OfferLetters() {
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center">
               <span className="text-white text-xs font-medium">
-                {candidate.name.split(' ').map(n => n[0]).join('')}
+                {candidate.name
+                  .split(' ')
+                  .map(n => n[0])
+                  .join('')}
               </span>
             </div>
             <div className="ml-2">
-              <div className="text-sm font-medium text-gray-900">
-                {candidate.name}
-              </div>
+              <div className="text-sm font-medium text-gray-900">{candidate.name}</div>
               <div className="text-sm text-gray-500">{candidate.email}</div>
             </div>
           </div>
-        ) : 'Unknown Candidate'
+        ) : (
+          'Unknown Candidate'
+        )
       },
     },
     {
@@ -152,34 +237,38 @@ export default function OfferLetters() {
             <div className="text-sm font-medium text-gray-900">{job.title}</div>
             <div className="text-sm text-gray-500">{job.location}</div>
           </div>
-        ) : 'Unknown Position'
+        ) : (
+          'Unknown Position'
+        )
       },
     },
     {
       key: 'salary',
       label: 'Salary',
-      render: (value) => value ? formatCurrency(value.amount) : '-',
+      render: value => (value ? formatCurrency(value.amount) : '-'),
     },
     {
       key: 'startDate',
       label: 'Start Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'offerDate',
       label: 'Offer Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'expiryDate',
       label: 'Expiry Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+      render: value => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}
+        >
           {value?.charAt(0).toUpperCase() + value?.slice(1)}
         </span>
       ),
@@ -223,29 +312,31 @@ export default function OfferLetters() {
   }
 
   const handleSendOffer = (offer: OfferLetter) => {
-    setOfferLetters(prev => prev.map(o =>
-      o.id === offer.id
-        ? { ...o, status: 'sent', updatedAt: new Date().toISOString() }
-        : o
-    ))
+    setOfferLetters(prev =>
+      prev.map(o =>
+        o.id === offer.id ? { ...o, status: 'sent', updatedAt: new Date().toISOString() } : o
+      )
+    )
   }
 
   const handleAcceptOffer = (offer: OfferLetter) => {
-    setOfferLetters(prev => prev.map(o =>
-      o.id === offer.id
-        ? { ...o, status: 'accepted', updatedAt: new Date().toISOString() }
-        : o
-    ))
+    setOfferLetters(prev =>
+      prev.map(o =>
+        o.id === offer.id ? { ...o, status: 'accepted', updatedAt: new Date().toISOString() } : o
+      )
+    )
   }
 
   const handleRejectOffer = (offer: OfferLetter) => {
     const reason = prompt('Please provide a reason for rejection:')
     if (reason !== null) {
-      setOfferLetters(prev => prev.map(o =>
-        o.id === offer.id
-          ? { ...o, status: 'rejected', notes: reason, updatedAt: new Date().toISOString() }
-          : o
-      ))
+      setOfferLetters(prev =>
+        prev.map(o =>
+          o.id === offer.id
+            ? { ...o, status: 'rejected', notes: reason, updatedAt: new Date().toISOString() }
+            : o
+        )
+      )
     }
   }
 
@@ -257,11 +348,11 @@ export default function OfferLetters() {
   const handleSubmit = () => {
     if (editingOffer) {
       // Update existing offer
-      setOfferLetters(prev => prev.map(o =>
-        o.id === editingOffer.id
-          ? { ...o, ...formData, updatedAt: new Date().toISOString() }
-          : o
-      ))
+      setOfferLetters(prev =>
+        prev.map(o =>
+          o.id === editingOffer.id ? { ...o, ...formData, updatedAt: new Date().toISOString() } : o
+        )
+      )
     } else {
       // Add new offer
       const newOffer: OfferLetter = {
@@ -296,13 +387,13 @@ export default function OfferLetters() {
   const rejectedOffers = offerLetters.filter(o => o.status === 'rejected')
   const pendingOffers = offerLetters.filter(o => o.status === 'draft')
 
-  const averageSalary = offerLetters.length > 0
-    ? offerLetters.reduce((sum, o) => sum + o.salary.amount, 0) / offerLetters.length
-    : 0
+  const averageSalary =
+    offerLetters.length > 0
+      ? offerLetters.reduce((sum, o) => sum + o.salary.amount, 0) / offerLetters.length
+      : 0
 
-  const acceptanceRate = sentOffers.length > 0
-    ? (acceptedOffers.length / sentOffers.length) * 100
-    : 0
+  const acceptanceRate =
+    sentOffers.length > 0 ? (acceptedOffers.length / sentOffers.length) * 100 : 0
 
   return (
     <div className="space-y-6">
@@ -337,12 +428,8 @@ export default function OfferLetters() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Total Offers
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {totalOffers}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Total Offers</dt>
+                <dd className="text-lg font-medium text-gray-900">{totalOffers}</dd>
               </dl>
             </div>
           </div>
@@ -355,12 +442,8 @@ export default function OfferLetters() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Sent Offers
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {sentOffers.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Sent Offers</dt>
+                <dd className="text-lg font-medium text-gray-900">{sentOffers.length}</dd>
               </dl>
             </div>
           </div>
@@ -373,12 +456,8 @@ export default function OfferLetters() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Accepted
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {acceptedOffers.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Accepted</dt>
+                <dd className="text-lg font-medium text-gray-900">{acceptedOffers.length}</dd>
               </dl>
             </div>
           </div>
@@ -395,12 +474,8 @@ export default function OfferLetters() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Acceptance Rate
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {acceptanceRate.toFixed(1)}%
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Acceptance Rate</dt>
+                <dd className="text-lg font-medium text-gray-900">{acceptanceRate.toFixed(1)}%</dd>
               </dl>
             </div>
           </div>
@@ -419,17 +494,13 @@ export default function OfferLetters() {
 
         <div className="card">
           <h3 className="text-lg font-medium text-gray-900 mb-2">Pending Offers</h3>
-          <div className="text-3xl font-bold text-orange-600">
-            {pendingOffers.length}
-          </div>
+          <div className="text-3xl font-bold text-orange-600">{pendingOffers.length}</div>
           <p className="text-sm text-gray-500 mt-1">Awaiting action</p>
         </div>
 
         <div className="card">
           <h3 className="text-lg font-medium text-gray-900 mb-2">Rejected Offers</h3>
-          <div className="text-3xl font-bold text-red-600">
-            {rejectedOffers.length}
-          </div>
+          <div className="text-3xl font-bold text-red-600">{rejectedOffers.length}</div>
           <p className="text-sm text-gray-500 mt-1">This period</p>
         </div>
       </div>
@@ -444,7 +515,7 @@ export default function OfferLetters() {
           filterable
           sortable
           pagination={{ enabled: true }}
-          actions={(offer) => (
+          actions={offer => (
             <div className="flex items-center space-x-2">
               {offer.status === 'draft' && (
                 <Button
@@ -476,18 +547,10 @@ export default function OfferLetters() {
                   </Button>
                 </>
               )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleGeneratePDF(offer)}
-              >
-                <DownloadIcon className="h-4 w-4" />
+              <Button variant="ghost" size="sm" onClick={() => handleGeneratePDF(offer)}>
+                <ArrowDownTrayIcon className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditOffer(offer)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleEditOffer(offer)}>
                 <PencilIcon className="h-4 w-4" />
               </Button>
             </div>
@@ -508,10 +571,12 @@ export default function OfferLetters() {
             label="Job Application"
             options={applicationOptions}
             value={formData.applicationId}
-            onChange={(value) => {
+            onChange={value => {
               const application = applications.find(a => a.id === value)
               const job = application ? jobs.find(j => j.id === application.jobId) : null
-              const candidate = application ? candidates.find(c => c.id === application.candidateId) : null
+              const candidate = application
+                ? candidates.find(c => c.id === application.candidateId)
+                : null
               setFormData(prev => ({
                 ...prev,
                 applicationId: value,
@@ -529,11 +594,9 @@ export default function OfferLetters() {
                 Selected Candidate
               </label>
               <div className="p-3 bg-gray-50 rounded-md">
-                {formData.candidateId ? (
-                  candidates.find(c => c.id === formData.candidateId)?.name || 'Unknown'
-                ) : (
-                  'No candidate selected'
-                )}
+                {formData.candidateId
+                  ? candidates.find(c => c.id === formData.candidateId)?.name || 'Unknown'
+                  : 'No candidate selected'}
               </div>
             </div>
 
@@ -542,11 +605,9 @@ export default function OfferLetters() {
                 Selected Position
               </label>
               <div className="p-3 bg-gray-50 rounded-md">
-                {formData.jobId ? (
-                  jobs.find(j => j.id === formData.jobId)?.title || 'Unknown'
-                ) : (
-                  'No position selected'
-                )}
+                {formData.jobId
+                  ? jobs.find(j => j.id === formData.jobId)?.title || 'Unknown'
+                  : 'No position selected'}
               </div>
             </div>
           </div>
@@ -559,10 +620,12 @@ export default function OfferLetters() {
                 label="Salary Amount"
                 type="number"
                 value={formData.salary.amount.toString()}
-                onChange={(e) => setFormData(prev => ({
-                  ...prev,
-                  salary: { ...prev.salary, amount: Number(e.target.value) }
-                }))}
+                onChange={e =>
+                  setFormData(prev => ({
+                    ...prev,
+                    salary: { ...prev.salary, amount: Number(e.target.value) },
+                  }))
+                }
                 placeholder="120000"
                 required
               />
@@ -576,10 +639,12 @@ export default function OfferLetters() {
                   { value: 'CAD', label: 'CAD (C$)' },
                 ]}
                 value={formData.salary.currency}
-                onChange={(value) => setFormData(prev => ({
-                  ...prev,
-                  salary: { ...prev.salary, currency: value }
-                }))}
+                onChange={value =>
+                  setFormData(prev => ({
+                    ...prev,
+                    salary: { ...prev.salary, currency: value },
+                  }))
+                }
               />
 
               <Select
@@ -590,10 +655,12 @@ export default function OfferLetters() {
                   { value: 'hourly', label: 'Per Hour' },
                 ]}
                 value={formData.salary.period}
-                onChange={(value) => setFormData(prev => ({
-                  ...prev,
-                  salary: { ...prev.salary, period: value as any }
-                }))}
+                onChange={value =>
+                  setFormData(prev => ({
+                    ...prev,
+                    salary: { ...prev.salary, period: value as any },
+                  }))
+                }
               />
             </div>
           </div>
@@ -604,7 +671,7 @@ export default function OfferLetters() {
               label="Start Date"
               type="date"
               value={formData.startDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
               required
             />
 
@@ -612,7 +679,7 @@ export default function OfferLetters() {
               label="Offer Date"
               type="date"
               value={formData.offerDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, offerDate: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, offerDate: e.target.value }))}
               required
             />
 
@@ -620,7 +687,7 @@ export default function OfferLetters() {
               label="Expiry Date"
               type="date"
               value={formData.expiryDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, expiryDate: e.target.value }))}
               required
             />
           </div>
@@ -634,7 +701,7 @@ export default function OfferLetters() {
               { value: 'contract', label: 'Contract Offer' },
             ]}
             value={formData.template}
-            onChange={(value) => setFormData(prev => ({ ...prev, template: value as any }))}
+            onChange={value => setFormData(prev => ({ ...prev, template: value as any }))}
             required
           />
 
@@ -646,19 +713,17 @@ export default function OfferLetters() {
               className="input w-full h-24 resize-none"
               placeholder="Health insurance, 401k matching, PTO policy, etc."
               value={formData.customTerms}
-              onChange={(e) => setFormData(prev => ({ ...prev, customTerms: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, customTerms: e.target.value }))}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Internal Notes
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Internal Notes</label>
             <textarea
               className="input w-full h-24 resize-none"
               placeholder="Internal notes about the candidate or offer..."
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
             />
           </div>
 
@@ -673,7 +738,7 @@ export default function OfferLetters() {
                 { value: 'expired', label: 'Expired' },
               ]}
               value={formData.status}
-              onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
+              onChange={value => setFormData(prev => ({ ...prev, status: value as any }))}
               required
             />
           )}
@@ -683,9 +748,7 @@ export default function OfferLetters() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
-            {editingOffer ? 'Update Offer' : 'Create Offer'}
-          </Button>
+          <Button onClick={handleSubmit}>{editingOffer ? 'Update Offer' : 'Create Offer'}</Button>
         </div>
       </Modal>
     </div>

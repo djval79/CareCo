@@ -42,53 +42,53 @@ export default function Employees() {
     // Simulate API call delay
     setTimeout(() => {
       const mockEmployees: Employee[] = [
-      {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@company.com',
-        phone: '+1-555-0123',
-        departmentId: '1',
-        designationId: '1',
-        hireDate: '2023-01-15',
-        salary: 75000,
-        status: 'active',
-        createdAt: '2023-01-15T00:00:00Z',
-        updatedAt: '2023-01-15T00:00:00Z',
-      },
-      {
-        id: '2',
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@company.com',
-        phone: '+1-555-0124',
-        departmentId: '2',
-        designationId: '2',
-        hireDate: '2023-02-01',
-        salary: 65000,
-        status: 'active',
-        createdAt: '2023-02-01T00:00:00Z',
-        updatedAt: '2023-02-01T00:00:00Z',
-      },
-      {
-        id: '3',
-        firstName: 'Mike',
-        lastName: 'Johnson',
-        email: 'mike.johnson@company.com',
-        phone: '+1-555-0125',
-        departmentId: '1',
-        designationId: '3',
-        hireDate: '2023-03-10',
-        salary: 55000,
-        status: 'active',
-        createdAt: '2023-03-10T00:00:00Z',
-        updatedAt: '2023-03-10T00:00:00Z',
-      },
-    ]
-    setEmployees(mockEmployees)
-    setLoading(false)
-  }, 500) // Simulate API delay
-}, [])
+        {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@company.com',
+          phone: '+1-555-0123',
+          departmentId: '1',
+          designationId: '1',
+          hireDate: '2023-01-15',
+          salary: 75000,
+          status: 'active',
+          createdAt: '2023-01-15T00:00:00Z',
+          updatedAt: '2023-01-15T00:00:00Z',
+        },
+        {
+          id: '2',
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane.smith@company.com',
+          phone: '+1-555-0124',
+          departmentId: '2',
+          designationId: '2',
+          hireDate: '2023-02-01',
+          salary: 65000,
+          status: 'active',
+          createdAt: '2023-02-01T00:00:00Z',
+          updatedAt: '2023-02-01T00:00:00Z',
+        },
+        {
+          id: '3',
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          email: 'mike.johnson@company.com',
+          phone: '+1-555-0125',
+          departmentId: '1',
+          designationId: '3',
+          hireDate: '2023-03-10',
+          salary: 55000,
+          status: 'active',
+          createdAt: '2023-03-10T00:00:00Z',
+          updatedAt: '2023-03-10T00:00:00Z',
+        },
+      ]
+      setEmployees(mockEmployees)
+      setLoading(false)
+    }, 500) // Simulate API delay
+  }, [])
 
   const columns: TableColumn<Employee>[] = [
     {
@@ -129,18 +129,20 @@ export default function Employees() {
     {
       key: 'hireDate',
       label: 'Hire Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'salary',
       label: 'Salary',
-      render: (value) => `$${value?.toLocaleString() || 0}`,
+      render: value => `$${value?.toLocaleString() || 0}`,
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+      render: value => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}
+        >
           {value?.charAt(0).toUpperCase() + value?.slice(1)}
         </span>
       ),
@@ -180,7 +182,9 @@ export default function Employees() {
   }
 
   const handleDeleteEmployee = (employee: Employee) => {
-    if (window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
+    if (
+      window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)
+    ) {
       setEmployees(prev => prev.filter(e => e.id !== employee.id))
     }
   }
@@ -188,11 +192,13 @@ export default function Employees() {
   const handleSubmit = () => {
     if (editingEmployee) {
       // Update existing employee
-      setEmployees(prev => prev.map(e =>
-        e.id === editingEmployee.id
-          ? { ...e, ...formData, updatedAt: new Date().toISOString() }
-          : e
-      ))
+      setEmployees(prev =>
+        prev.map(e =>
+          e.id === editingEmployee.id
+            ? { ...e, ...formData, updatedAt: new Date().toISOString() }
+            : e
+        )
+      )
     } else {
       // Add new employee
       const newEmployee: Employee = {
@@ -230,7 +236,7 @@ export default function Employees() {
             Employees
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Manage your organization's employee information and records.
+            Manage your organization&apos;s employee information and records.
           </p>
         </div>
         <div className="mt-4 flex md:ml-4 md:mt-0 space-x-3">
@@ -254,12 +260,8 @@ export default function Employees() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Total Employees
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {employees.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Total Employees</dt>
+                <dd className="text-lg font-medium text-gray-900">{employees.length}</dd>
               </dl>
             </div>
           </div>
@@ -276,9 +278,7 @@ export default function Employees() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Active Employees
-                </dt>
+                <dt className="text-sm font-medium text-gray-500 truncate">Active Employees</dt>
                 <dd className="text-lg font-medium text-gray-900">
                   {employees.filter(e => e.status === 'active').length}
                 </dd>
@@ -291,19 +291,13 @@ export default function Employees() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 text-sm font-medium">
-                  {departments.length}
-                </span>
+                <span className="text-blue-600 text-sm font-medium">{departments.length}</span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Departments
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {departments.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Departments</dt>
+                <dd className="text-lg font-medium text-gray-900">{departments.length}</dd>
               </dl>
             </div>
           </div>
@@ -313,19 +307,13 @@ export default function Employees() {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                <span className="text-purple-600 text-sm font-medium">
-                  {designations.length}
-                </span>
+                <span className="text-purple-600 text-sm font-medium">{designations.length}</span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Designations
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {designations.length}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Designations</dt>
+                <dd className="text-lg font-medium text-gray-900">{designations.length}</dd>
               </dl>
             </div>
           </div>
@@ -343,7 +331,7 @@ export default function Employees() {
           sortable
           selectable
           pagination={{ enabled: true }}
-          actions={(employee) => (
+          actions={employee => (
             <div className="flex items-center space-x-2">
               <Button
                 variant="ghost"
@@ -380,7 +368,7 @@ export default function Employees() {
             <Input
               label="First Name"
               value={formData.firstName}
-              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
               required
               data-testid="employee-name"
             />
@@ -388,7 +376,7 @@ export default function Employees() {
             <Input
               label="Last Name"
               value={formData.lastName}
-              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
               required
             />
           </div>
@@ -398,14 +386,14 @@ export default function Employees() {
               label="Email"
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
               required
             />
 
             <Input
               label="Phone"
               value={formData.phone}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
               required
             />
           </div>
@@ -415,7 +403,7 @@ export default function Employees() {
               label="Department"
               options={departmentOptions}
               value={formData.departmentId}
-              onChange={(value) => setFormData(prev => ({ ...prev, departmentId: value }))}
+              onChange={value => setFormData(prev => ({ ...prev, departmentId: value }))}
               placeholder="Select department"
               required
             />
@@ -424,7 +412,7 @@ export default function Employees() {
               label="Designation"
               options={designationOptions}
               value={formData.designationId}
-              onChange={(value) => setFormData(prev => ({ ...prev, designationId: value }))}
+              onChange={value => setFormData(prev => ({ ...prev, designationId: value }))}
               placeholder="Select designation"
               required
             />
@@ -435,7 +423,7 @@ export default function Employees() {
               label="Hire Date"
               type="date"
               value={formData.hireDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, hireDate: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, hireDate: e.target.value }))}
               required
             />
 
@@ -443,7 +431,7 @@ export default function Employees() {
               label="Salary"
               type="number"
               value={formData.salary.toString()}
-              onChange={(e) => setFormData(prev => ({ ...prev, salary: Number(e.target.value) }))}
+              onChange={e => setFormData(prev => ({ ...prev, salary: Number(e.target.value) }))}
               required
             />
           </div>
@@ -456,13 +444,17 @@ export default function Employees() {
               { value: 'terminated', label: 'Terminated' },
             ]}
             value={formData.status}
-            onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
+            onChange={value => setFormData(prev => ({ ...prev, status: value as any }))}
             required
           />
         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
-          <Button variant="secondary" onClick={() => setShowModal(false)} data-testid="employee-modal">
+          <Button
+            variant="secondary"
+            onClick={() => setShowModal(false)}
+            data-testid="employee-modal"
+          >
             Cancel
           </Button>
           <Button onClick={handleSubmit} data-testid="submit-employee">

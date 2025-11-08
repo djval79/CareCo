@@ -59,7 +59,7 @@ export default function Dashboard() {
       id: 3,
       type: 'leave',
       title: 'Leave request approved',
-      description: 'Mike Chen\'s annual leave request was approved',
+      description: "Mike Chen's annual leave request was approved",
       timestamp: '1 hour ago',
       icon: CheckCircleIcon,
       color: 'green',
@@ -156,13 +156,13 @@ export default function Dashboard() {
             Dashboard
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Welcome back! Here's what's happening with your HR operations.
+            Welcome back! Here&apos;s what&apos;s happening with your HR operations.
           </p>
         </div>
         <div className="mt-4 flex md:ml-4 md:mt-0">
           <select
             value={timeRange}
-            onChange={(e) => setTimeRange(e.target.value as typeof timeRange)}
+            onChange={e => setTimeRange(e.target.value as typeof timeRange)}
             className="input mr-3"
           >
             <option value="7d">Last 7 days</option>
@@ -183,7 +183,7 @@ export default function Dashboard() {
             { id: 'overview', label: 'Overview', icon: ChartBarIcon },
             { id: 'recruitment', label: 'Recruitment', icon: UsersIcon },
             { id: 'hr', label: 'HR Operations', icon: BriefcaseIcon },
-          ].map((tab) => {
+          ].map(tab => {
             const Icon = tab.icon
             return (
               <button
@@ -214,7 +214,7 @@ export default function Dashboard() {
               change={{
                 value: mockStats.employeeGrowth,
                 type: 'increase',
-                label: 'from last month'
+                label: 'from last month',
               }}
               icon={UsersIcon}
               data-testid="metric-total-employees"
@@ -226,7 +226,7 @@ export default function Dashboard() {
               change={{
                 value: 15.2,
                 type: 'increase',
-                label: 'from last month'
+                label: 'from last month',
               }}
               icon={BriefcaseIcon}
               data-testid="metric-active-jobs"
@@ -238,7 +238,7 @@ export default function Dashboard() {
               change={{
                 value: 8.7,
                 type: 'decrease',
-                label: 'from last week'
+                label: 'from last week',
               }}
               icon={DocumentTextIcon}
               data-testid="metric-pending-applications"
@@ -250,7 +250,7 @@ export default function Dashboard() {
               change={{
                 value: 12.3,
                 type: 'decrease',
-                label: 'improvement'
+                label: 'improvement',
               }}
               icon={ArrowTrendingUpIcon}
               data-testid="metric-time-to-hire"
@@ -269,10 +269,7 @@ export default function Dashboard() {
                     +12% from last week
                   </div>
                 </div>
-                <TrendChart
-                  data={chartData.applicationsTrend}
-                  title=""
-                />
+                <TrendChart data={chartData.applicationsTrend} title="" />
               </div>
             </div>
 
@@ -280,33 +277,43 @@ export default function Dashboard() {
             <div className="card">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Activities</h3>
               <div className="space-y-3">
-                {recentActivities.slice(0, 5).map((activity) => {
+                {recentActivities.slice(0, 5).map(activity => {
                   const Icon = activity.icon
                   return (
                     <div key={activity.id} className="flex items-start space-x-3">
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                        activity.color === 'blue' ? 'bg-blue-100' :
-                        activity.color === 'green' ? 'bg-green-100' :
-                        activity.color === 'yellow' ? 'bg-yellow-100' :
-                        activity.color === 'purple' ? 'bg-purple-100' : 'bg-gray-100'
-                      }`}>
-                        <Icon className={`h-4 w-4 ${
-                          activity.color === 'blue' ? 'text-blue-600' :
-                          activity.color === 'green' ? 'text-green-600' :
-                          activity.color === 'yellow' ? 'text-yellow-600' :
-                          activity.color === 'purple' ? 'text-purple-600' : 'text-gray-600'
-                        }`} />
+                      <div
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          activity.color === 'blue'
+                            ? 'bg-blue-100'
+                            : activity.color === 'green'
+                              ? 'bg-green-100'
+                              : activity.color === 'yellow'
+                                ? 'bg-yellow-100'
+                                : activity.color === 'purple'
+                                  ? 'bg-purple-100'
+                                  : 'bg-gray-100'
+                        }`}
+                      >
+                        <Icon
+                          className={`h-4 w-4 ${
+                            activity.color === 'blue'
+                              ? 'text-blue-600'
+                              : activity.color === 'green'
+                                ? 'text-green-600'
+                                : activity.color === 'yellow'
+                                  ? 'text-yellow-600'
+                                  : activity.color === 'purple'
+                                    ? 'text-purple-600'
+                                    : 'text-gray-600'
+                          }`}
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {activity.title}
                         </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {activity.description}
-                        </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {activity.timestamp}
-                        </p>
+                        <p className="text-sm text-gray-500 truncate">{activity.description}</p>
+                        <p className="text-xs text-gray-400 mt-1">{activity.timestamp}</p>
                       </div>
                     </div>
                   )
@@ -331,18 +338,30 @@ export default function Dashboard() {
                     key={index}
                     onClick={action.action}
                     className={`p-4 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all text-left ${
-                      action.color === 'blue' ? 'hover:bg-blue-50' :
-                      action.color === 'green' ? 'hover:bg-green-50' :
-                      action.color === 'purple' ? 'hover:bg-purple-50' :
-                      action.color === 'orange' ? 'hover:bg-orange-50' : 'hover:bg-gray-50'
+                      action.color === 'blue'
+                        ? 'hover:bg-blue-50'
+                        : action.color === 'green'
+                          ? 'hover:bg-green-50'
+                          : action.color === 'purple'
+                            ? 'hover:bg-purple-50'
+                            : action.color === 'orange'
+                              ? 'hover:bg-orange-50'
+                              : 'hover:bg-gray-50'
                     }`}
                   >
-                    <Icon className={`h-6 w-6 mb-2 ${
-                      action.color === 'blue' ? 'text-blue-600' :
-                      action.color === 'green' ? 'text-green-600' :
-                      action.color === 'purple' ? 'text-purple-600' :
-                      action.color === 'orange' ? 'text-orange-600' : 'text-gray-600'
-                    }`} />
+                    <Icon
+                      className={`h-6 w-6 mb-2 ${
+                        action.color === 'blue'
+                          ? 'text-blue-600'
+                          : action.color === 'green'
+                            ? 'text-green-600'
+                            : action.color === 'purple'
+                              ? 'text-purple-600'
+                              : action.color === 'orange'
+                                ? 'text-orange-600'
+                                : 'text-gray-600'
+                      }`}
+                    />
                     <h4 className="font-medium text-gray-900">{action.title}</h4>
                     <p className="text-sm text-gray-500 mt-1">{action.description}</p>
                   </button>
@@ -363,7 +382,7 @@ export default function Dashboard() {
               change={{
                 value: 2,
                 type: 'increase',
-                label: 'new this week'
+                label: 'new this week',
               }}
               icon={BriefcaseIcon}
             />
@@ -374,7 +393,7 @@ export default function Dashboard() {
               change={{
                 value: 23.5,
                 type: 'increase',
-                label: 'from last week'
+                label: 'from last week',
               }}
               icon={DocumentTextIcon}
             />
@@ -385,7 +404,7 @@ export default function Dashboard() {
               change={{
                 value: 5.2,
                 type: 'increase',
-                label: 'from last month'
+                label: 'from last month',
               }}
               icon={CheckCircleIcon}
             />
@@ -394,10 +413,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Applications by Source</h3>
-              <DistributionChart
-                data={chartData.departmentDistribution}
-                title=""
-              />
+              <DistributionChart data={chartData.departmentDistribution} title="" />
             </div>
 
             <div className="card">
@@ -450,7 +466,7 @@ export default function Dashboard() {
               change={{
                 value: 1,
                 type: 'decrease',
-                label: 'from yesterday'
+                label: 'from yesterday',
               }}
               icon={CalendarDaysIcon}
             />
@@ -461,7 +477,7 @@ export default function Dashboard() {
               change={{
                 value: 0.1,
                 type: 'increase',
-                label: 'from last survey'
+                label: 'from last survey',
               }}
               icon={ArrowTrendingUpIcon}
             />
@@ -472,7 +488,7 @@ export default function Dashboard() {
               change={{
                 value: 0.5,
                 type: 'decrease',
-                label: 'improvement'
+                label: 'improvement',
               }}
               icon={ClockIcon}
             />
@@ -481,35 +497,20 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Leave Types Distribution</h3>
-              <DistributionChart
-                data={chartData.leaveTypes}
-                title=""
-              />
+              <DistributionChart data={chartData.leaveTypes} title="" />
             </div>
 
             <div className="card">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Attendance Overview</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
-                  <ProgressRing
-                    value={94.2}
-                    max={100}
-                    size={80}
-                    strokeWidth={6}
-                    color="#10B981"
-                  />
+                  <ProgressRing value={94.2} max={100} size={80} strokeWidth={6} color="#10B981" />
                   <p className="text-sm font-medium text-gray-900 mt-2">Present Today</p>
                   <p className="text-xs text-gray-500">94.2%</p>
                 </div>
 
                 <div className="text-center">
-                  <ProgressRing
-                    value={3.2}
-                    max={100}
-                    size={80}
-                    strokeWidth={6}
-                    color="#EF4444"
-                  />
+                  <ProgressRing value={3.2} max={100} size={80} strokeWidth={6} color="#EF4444" />
                   <p className="text-sm font-medium text-gray-900 mt-2">Absent Today</p>
                   <p className="text-xs text-gray-500">3.2%</p>
                 </div>
