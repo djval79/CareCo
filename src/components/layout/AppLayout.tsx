@@ -126,6 +126,7 @@ export default function AppLayout({ children, sidebarCollapsed, setSidebarCollap
                               className={`nav-item ${isActive ? 'active' : ''}`}
                               onClick={() => setMobileSidebarOpen(false)}
                               data-testid={`nav-${child.href.replace('/', '')}`}
+                              data-link={child.href}
                             >
                               <Icon className="mr-3 h-5 w-5" />
                               {child.name}

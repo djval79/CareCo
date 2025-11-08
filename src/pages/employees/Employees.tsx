@@ -38,7 +38,10 @@ export default function Employees() {
 
   // Mock data - replace with API calls
   useEffect(() => {
-    const mockEmployees: Employee[] = [
+    setLoading(true)
+    // Simulate API call delay
+    setTimeout(() => {
+      const mockEmployees: Employee[] = [
       {
         id: '1',
         firstName: 'John',
@@ -83,7 +86,9 @@ export default function Employees() {
       },
     ]
     setEmployees(mockEmployees)
-  }, [])
+    setLoading(false)
+  }, 500) // Simulate API delay
+}, [])
 
   const columns: TableColumn<Employee>[] = [
     {
@@ -233,7 +238,7 @@ export default function Employees() {
             <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
             Export
           </Button>
-          <Button onClick={handleAddEmployee}>
+          <Button onClick={handleAddEmployee} data-testid="add-employee-btn">
             <PlusIcon className="h-4 w-4 mr-2" />
             Add Employee
           </Button>
@@ -344,6 +349,7 @@ export default function Employees() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleEditEmployee(employee)}
+                data-testid={`edit-employee-${employee.id}`}
               >
                 <PencilIcon className="h-4 w-4" />
               </Button>
@@ -351,6 +357,7 @@ export default function Employees() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDeleteEmployee(employee)}
+                data-testid={`delete-employee-${employee.id}`}
               >
                 <TrashIcon className="h-4 w-4" />
               </Button>
@@ -375,6 +382,7 @@ export default function Employees() {
               value={formData.firstName}
               onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
               required
+              data-testid="employee-name"
             />
 
             <Input
@@ -454,10 +462,10 @@ export default function Employees() {
         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="secondary" onClick={() => setShowModal(false)} data-testid="employee-modal">
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} data-testid="submit-employee">
             {editingEmployee ? 'Update Employee' : 'Add Employee'}
           </Button>
         </div>

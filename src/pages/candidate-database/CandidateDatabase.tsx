@@ -2,25 +2,35 @@ import { useState, useEffect } from 'react'
 import {
   PlusIcon,
   PencilIcon,
-  EyeIcon,
   TrashIcon,
-  UserIcon,
-  MapPinIcon,
-  BriefcaseIcon,
-  CurrencyDollarIcon,
-  StarIcon,
+  EyeIcon,
+  UserGroupIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
   ArrowDownTrayIcon,
+  StarIcon,
 } from '@heroicons/react/24/outline'
 import DataTable, { TableColumn } from '@/components/ui/DataTable'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
-import { useAppStore } from '@/store'
-import { Candidate } from '@/types'
-import { formatDate, getInitials, getStatusColor } from '@/utils'
+import { formatDate } from '@/utils'
+
+interface Candidate {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  position: string
+  experience: number
+  skills: string[]
+  status: 'new' | 'screening' | 'interview' | 'offer' | 'hired' | 'rejected'
+  rating: number
+  appliedDate: string
+  resume?: string
+}
 
 export default function CandidateDatabase() {
   const [candidates, setCandidates] = useState<Candidate[]>([])
@@ -28,99 +38,83 @@ export default function CandidateDatabase() {
   const [showModal, setShowModal] = useState(false)
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null)
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    resume: '',
-    skills: [] as string[],
+    position: '',
     experience: 0,
-    location: '',
-    expectedSalary: 0,
-    status: 'active' as 'active' | 'hired' | 'rejected' | 'contacted' | 'interested' | 'not-interested',
-    notes: '',
+    skills: [] as string[],
+    status: 'new' as Candidate['status'],
+    rating: 0,
   })
 
   // Mock data - replace with API calls
   useEffect(() => {
-    const mockCandidates: Candidate[] = [
-      {
-        id: '1',
-        name: 'John Doe',
-        email: 'john.doe@email.com',
-        phone: '+1-555-0123',
-        resume: 'john-doe-resume.pdf',
-        skills: ['React', 'TypeScript', 'Node.js', 'Python'],
-        experience: 5,
-        location: 'New York, NY',
-        expectedSalary: 120000,
-        status: 'active',
-        notes: 'Strong full-stack developer with excellent communication skills',
-        createdAt: '2023-01-15T00:00:00Z',
-        updatedAt: '2023-01-15T00:00:00Z',
-      },
-      {
-        id: '2',
-        name: 'Jane Smith',
-        email: 'jane.smith@email.com',
-        phone: '+1-555-0124',
-        resume: 'jane-smith-resume.pdf',
-        skills: ['Product Management', 'Agile', 'Data Analysis', 'User Research'],
-        experience: 4,
-        location: 'San Francisco, CA',
-        expectedSalary: 130000,
-        status: 'active',
-        notes: 'Experienced product manager with startup background',
-        createdAt: '2023-02-01T00:00:00Z',
-        updatedAt: '2023-02-01T00:00:00Z',
-      },
-      {
-        id: '3',
-        name: 'Mike Johnson',
-        email: 'mike.johnson@email.com',
-        phone: '+1-555-0125',
-        resume: 'mike-johnson-resume.pdf',
-        skills: ['UI/UX Design', 'Figma', 'Adobe Creative Suite', 'Prototyping'],
-        experience: 3,
-        location: 'Austin, TX',
-        expectedSalary: 90000,
-        status: 'hired',
-        notes: 'Creative designer with strong portfolio and user-centered approach',
-        createdAt: '2023-03-10T00:00:00Z',
-        updatedAt: '2023-03-15T00:00:00Z',
-      },
-      {
-        id: '4',
-        name: 'Sarah Wilson',
-        email: 'sarah.wilson@email.com',
-        phone: '+1-555-0126',
-        resume: 'sarah-wilson-resume.pdf',
-        skills: ['DevOps', 'AWS', 'Docker', 'Kubernetes', 'CI/CD'],
-        experience: 6,
-        location: 'Seattle, WA',
-        expectedSalary: 140000,
-        status: 'active',
-        notes: 'Senior DevOps engineer with cloud architecture expertise',
-        createdAt: '2023-04-05T00:00:00Z',
-        updatedAt: '2023-04-05T00:00:00Z',
-      },
-    ]
-    setCandidates(mockCandidates)
+    setLoading(true)
+    setTimeout(() => {
+      const mockCandidates: Candidate[] = [
+        {
+          id: '1',
+          firstName: 'John',
+          lastName: 'Doe',
+          email: 'john.doe@email.com',
+          phone: '+1-555-0123',
+          position: 'Senior Software Engineer',
+          experience: 5,
+          skills: ['React', 'Node.js', 'TypeScript', 'Python'],
+          status: 'interview',
+          rating: 4,
+          appliedDate: '2024-01-15',
+        },
+        {
+          id: '2',
+          firstName: 'Jane',
+          lastName: 'Smith',
+          email: 'jane.smith@email.com',
+          phone: '+1-555-0124',
+          position: 'Product Manager',
+          experience: 3,
+          skills: ['Product Strategy', 'Agile', 'Analytics', 'Leadership'],
+          status: 'screening',
+          rating: 5,
+          appliedDate: '2024-01-12',
+        },
+        {
+          id: '3',
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          email: 'mike.johnson@email.com',
+          phone: '+1-555-0125',
+          position: 'UX Designer',
+          experience: 4,
+          skills: ['Figma', 'User Research', 'Prototyping', 'Design Systems'],
+          status: 'offer',
+          rating: 4,
+          appliedDate: '2024-01-10',
+        },
+      ]
+      setCandidates(mockCandidates)
+      setLoading(false)
+    }, 500)
   }, [])
 
   const columns: TableColumn<Candidate>[] = [
     {
       key: 'name',
       label: 'Candidate',
+      sortable: true,
+      filterable: true,
       render: (_, candidate) => (
         <div className="flex items-center">
           <div className="h-10 w-10 rounded-full bg-primary-500 flex items-center justify-center">
             <span className="text-white text-sm font-medium">
-              {getInitials(candidate.name)}
+              {candidate.firstName[0]}{candidate.lastName[0]}
             </span>
           </div>
           <div className="ml-3">
             <div className="text-sm font-medium text-gray-900">
-              {candidate.name}
+              {candidate.firstName} {candidate.lastName}
             </div>
             <div className="text-sm text-gray-500">{candidate.email}</div>
           </div>
@@ -128,58 +122,59 @@ export default function CandidateDatabase() {
       ),
     },
     {
-      key: 'location',
-      label: 'Location',
-      render: (value) => (
-        <div className="flex items-center">
-          <MapPinIcon className="h-4 w-4 mr-1 text-gray-400" />
-          {value}
-        </div>
-      ),
+      key: 'position',
+      label: 'Position',
+      sortable: true,
+      filterable: true,
     },
     {
       key: 'experience',
       label: 'Experience',
+      sortable: true,
       render: (value) => `${value} years`,
-    },
-    {
-      key: 'skills',
-      label: 'Skills',
-      render: (value) => (
-        <div className="flex flex-wrap gap-1">
-          {(value as string[]).slice(0, 3).map((skill, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800"
-            >
-              {skill}
-            </span>
-          ))}
-          {(value as string[]).length > 3 && (
-            <span className="text-xs text-gray-500">
-              +{(value as string[]).length - 3} more
-            </span>
-          )}
-        </div>
-      ),
-    },
-    {
-      key: 'expectedSalary',
-      label: 'Expected Salary',
-      render: (value) => `$${value?.toLocaleString() || 0}`,
     },
     {
       key: 'status',
       label: 'Status',
+      sortable: true,
+      render: (value) => {
+        const colors = {
+          new: 'bg-blue-100 text-blue-800',
+          screening: 'bg-yellow-100 text-yellow-800',
+          interview: 'bg-purple-100 text-purple-800',
+          offer: 'bg-green-100 text-green-800',
+          hired: 'bg-emerald-100 text-emerald-800',
+          rejected: 'bg-red-100 text-red-800',
+        }
+        return (
+          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full capitalize ${colors[value as keyof typeof colors]}`}>
+            {value}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'rating',
+      label: 'Rating',
+      sortable: true,
       render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
-          {value?.charAt(0).toUpperCase() + value?.slice(1)}
-        </span>
+        <div className="flex items-center">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <StarIcon
+              key={star}
+              className={`h-4 w-4 ${
+                star <= value ? 'text-yellow-400 fill-current' : 'text-gray-300'
+              }`}
+            />
+          ))}
+          <span className="ml-1 text-sm text-gray-500">({value})</span>
+        </div>
       ),
     },
     {
-      key: 'createdAt',
-      label: 'Added',
+      key: 'appliedDate',
+      label: 'Applied',
+      sortable: true,
       render: (value) => formatDate(value),
     },
   ]
@@ -187,16 +182,15 @@ export default function CandidateDatabase() {
   const handleAddCandidate = () => {
     setEditingCandidate(null)
     setFormData({
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       phone: '',
-      resume: '',
-      skills: [],
+      position: '',
       experience: 0,
-      location: '',
-      expectedSalary: 0,
-      status: 'active',
-      notes: '',
+      skills: [],
+      status: 'new',
+      rating: 0,
     })
     setShowModal(true)
   }
@@ -204,22 +198,21 @@ export default function CandidateDatabase() {
   const handleEditCandidate = (candidate: Candidate) => {
     setEditingCandidate(candidate)
     setFormData({
-      name: candidate.name,
+      firstName: candidate.firstName,
+      lastName: candidate.lastName,
       email: candidate.email,
       phone: candidate.phone,
-      resume: candidate.resume,
-      skills: candidate.skills,
+      position: candidate.position,
       experience: candidate.experience,
-      location: candidate.location,
-      expectedSalary: candidate.expectedSalary,
+      skills: candidate.skills,
       status: candidate.status,
-      notes: candidate.notes || '',
+      rating: candidate.rating,
     })
     setShowModal(true)
   }
 
   const handleDeleteCandidate = (candidate: Candidate) => {
-    if (window.confirm(`Are you sure you want to delete ${candidate.name}?`)) {
+    if (window.confirm(`Are you sure you want to delete ${candidate.firstName} ${candidate.lastName}?`)) {
       setCandidates(prev => prev.filter(c => c.id !== candidate.id))
     }
   }
@@ -229,7 +222,7 @@ export default function CandidateDatabase() {
       // Update existing candidate
       setCandidates(prev => prev.map(c =>
         c.id === editingCandidate.id
-          ? { ...c, ...formData, updatedAt: new Date().toISOString() }
+          ? { ...c, ...formData }
           : c
       ))
     } else {
@@ -237,8 +230,7 @@ export default function CandidateDatabase() {
       const newCandidate: Candidate = {
         id: Date.now().toString(),
         ...formData,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        appliedDate: new Date().toISOString().split('T')[0],
       }
       setCandidates(prev => [...prev, newCandidate])
     }
@@ -250,23 +242,6 @@ export default function CandidateDatabase() {
     // In real implementation, this would export to CSV/Excel
   }
 
-  // Statistics
-  const totalCandidates = candidates.length
-  const activeCandidates = candidates.filter(c => c.status === 'active')
-  const hiredCandidates = candidates.filter(c => c.status === 'hired')
-  const averageExperience = candidates.reduce((sum, c) => sum + c.experience, 0) / candidates.length
-  const averageSalary = candidates.reduce((sum, c) => sum + c.expectedSalary, 0) / candidates.length
-
-  // Top skills
-  const allSkills = candidates.flatMap(c => c.skills)
-  const skillCounts = allSkills.reduce((acc, skill) => {
-    acc[skill] = (acc[skill] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
-  const topSkills = Object.entries(skillCounts)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 5)
-
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -276,7 +251,7 @@ export default function CandidateDatabase() {
             Candidate Database
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Manage your talent pool and find the perfect candidates for your positions.
+            Manage and track all job candidates in your recruitment pipeline.
           </p>
         </div>
         <div className="mt-4 flex md:ml-4 md:mt-0 space-x-3">
@@ -296,7 +271,7 @@ export default function CandidateDatabase() {
         <div className="card">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <UserIcon className="h-6 w-6 text-gray-400" />
+              <UserGroupIcon className="h-6 w-6 text-gray-400" />
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
@@ -304,29 +279,7 @@ export default function CandidateDatabase() {
                   Total Candidates
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {totalCandidates}
-                </dd>
-              </dl>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
-                <span className="text-green-600 text-sm font-medium">
-                  {activeCandidates.length}
-                </span>
-              </div>
-            </div>
-            <div className="ml-5 w-0 flex-1">
-              <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Active Candidates
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {activeCandidates.length}
+                  {candidates.length}
                 </dd>
               </dl>
             </div>
@@ -338,17 +291,17 @@ export default function CandidateDatabase() {
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
                 <span className="text-blue-600 text-sm font-medium">
-                  {averageExperience.toFixed(1)}
+                  {candidates.filter(c => c.status === 'new').length}
                 </span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium text-gray-500 truncate">
-                  Avg Experience
+                  New Candidates
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {averageExperience.toFixed(1)} years
+                  {candidates.filter(c => c.status === 'new').length}
                 </dd>
               </dl>
             </div>
@@ -360,36 +313,43 @@ export default function CandidateDatabase() {
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
                 <span className="text-purple-600 text-sm font-medium">
-                  ${(averageSalary / 1000).toFixed(0)}k
+                  {candidates.filter(c => c.status === 'interview').length}
                 </span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium text-gray-500 truncate">
-                  Avg Salary Expectation
+                  In Interview
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  ${(averageSalary / 1000).toFixed(0)}k
+                  {candidates.filter(c => c.status === 'interview').length}
                 </dd>
               </dl>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Top Skills */}
-      <div className="card">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Top Skills in Database</h3>
-        <div className="flex flex-wrap gap-3">
-          {topSkills.map(([skill, count]) => (
-            <div key={skill} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-              <span className="text-sm font-medium text-gray-900">{skill}</span>
-              <span className="ml-2 bg-primary-100 text-primary-800 text-xs font-medium px-2 py-0.5 rounded-full">
-                {count}
-              </span>
+        <div className="card">
+          <div className="flex items-center">
+            <div className="flex-shrink-0">
+              <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                <span className="text-green-600 text-sm font-medium">
+                  {candidates.filter(c => c.status === 'offer').length}
+                </span>
+              </div>
             </div>
-          ))}
+            <div className="ml-5 w-0 flex-1">
+              <dl>
+                <dt className="text-sm font-medium text-gray-500 truncate">
+                  Offers Extended
+                </dt>
+                <dd className="text-lg font-medium text-gray-900">
+                  {candidates.filter(c => c.status === 'offer').length}
+                </dd>
+              </dl>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -409,6 +369,7 @@ export default function CandidateDatabase() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleEditCandidate(candidate)}
+                data-testid={`edit-candidate-${candidate.id}`}
               >
                 <PencilIcon className="h-4 w-4" />
               </Button>
@@ -416,12 +377,13 @@ export default function CandidateDatabase() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleDeleteCandidate(candidate)}
+                data-testid={`delete-candidate-${candidate.id}`}
               >
                 <TrashIcon className="h-4 w-4" />
               </Button>
             </div>
           )}
-          emptyMessage="No candidates found. Add candidates to build your talent database."
+          emptyMessage="No candidates found. Add your first candidate to get started."
           data-testid="candidates-table"
         />
       </div>
@@ -436,117 +398,95 @@ export default function CandidateDatabase() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
-              label="Full Name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="John Doe"
+              label="First Name"
+              value={formData.firstName}
+              onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
               required
+              data-testid="candidate-name"
             />
 
+            <Input
+              label="Last Name"
+              value={formData.lastName}
+              onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              placeholder="john@example.com"
               required
             />
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Phone"
               value={formData.phone}
               onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              placeholder="+1 (555) 123-4567"
-              required
-            />
-
-            <Input
-              label="Location"
-              value={formData.location}
-              onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-              placeholder="New York, NY"
               required
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Position Applied For"
+              value={formData.position}
+              onChange={(e) => setFormData(prev => ({ ...prev, position: e.target.value }))}
+              required
+            />
+
             <Input
               label="Years of Experience"
               type="number"
               value={formData.experience.toString()}
               onChange={(e) => setFormData(prev => ({ ...prev, experience: Number(e.target.value) }))}
-              min="0"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Select
+              label="Status"
+              options={[
+                { value: 'new', label: 'New' },
+                { value: 'screening', label: 'Screening' },
+                { value: 'interview', label: 'Interview' },
+                { value: 'offer', label: 'Offer' },
+                { value: 'hired', label: 'Hired' },
+                { value: 'rejected', label: 'Rejected' },
+              ]}
+              value={formData.status}
+              onChange={(value) => setFormData(prev => ({ ...prev, status: value as Candidate['status'] }))}
               required
             />
 
-            <Input
-              label="Expected Salary"
-              type="number"
-              value={formData.expectedSalary.toString()}
-              onChange={(e) => setFormData(prev => ({ ...prev, expectedSalary: Number(e.target.value) }))}
-              placeholder="120000"
+            <Select
+              label="Rating"
+              options={[
+                { value: '1', label: '1 Star' },
+                { value: '2', label: '2 Stars' },
+                { value: '3', label: '3 Stars' },
+                { value: '4', label: '4 Stars' },
+                { value: '5', label: '5 Stars' },
+              ]}
+              value={formData.rating.toString()}
+              onChange={(value) => setFormData(prev => ({ ...prev, rating: Number(value) }))}
               required
             />
           </div>
 
           <Input
-            label="Resume"
-            value={formData.resume}
-            onChange={(e) => setFormData(prev => ({ ...prev, resume: e.target.value }))}
-            placeholder="resume.pdf or link to resume"
-            required
-          />
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Skills (comma-separated)
-            </label>
-            <Input
-              value={formData.skills.join(', ')}
-              onChange={(e) => setFormData(prev => ({
-                ...prev,
-                skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)
-              }))}
-              placeholder="React, TypeScript, Node.js"
-            />
-            {formData.skills.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {formData.skills.map((skill, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
-            </label>
-            <textarea
-              className="input w-full h-24 resize-none"
-              placeholder="Additional notes about the candidate..."
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-            />
-          </div>
-
-          <Select
-            label="Status"
-            options={[
-              { value: 'active', label: 'Active' },
-              { value: 'hired', label: 'Hired' },
-              { value: 'rejected', label: 'Rejected' },
-            ]}
-            value={formData.status}
-            onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
-            required
+            label="Skills (comma-separated)"
+            value={formData.skills.join(', ')}
+            onChange={(e) => setFormData(prev => ({
+              ...prev,
+              skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)
+            }))}
+            placeholder="React, Node.js, TypeScript"
+            data-testid="candidate-search"
           />
         </div>
 
@@ -554,7 +494,7 @@ export default function CandidateDatabase() {
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} data-testid="submit-candidate">
             {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
           </Button>
         </div>

@@ -17,6 +17,7 @@ import Holidays from './pages/holidays/Holidays'
 import Shifts from './pages/shifts/Shifts'
 import Appreciations from './pages/appreciations/Appreciations'
 import JobReports from './pages/job-reports/JobReports'
+import LetterTemplates from './pages/letter-templates/LetterTemplates'
 import './App.css'
 
 function App() {
@@ -56,6 +57,9 @@ function App() {
           
           {/* Reports Routes */}
           <Route path="/job-reports" element={<JobReports />} />
+
+          {/* Letter Templates Route */}
+          <Route path="/letter-templates" element={<LetterTemplates />} />
         </Routes>
       </AppLayout>
     </div>

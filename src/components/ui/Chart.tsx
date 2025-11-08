@@ -161,9 +161,10 @@ interface MetricCardProps {
   }
   icon?: React.ComponentType<{ className?: string }>
   className?: string
+  'data-testid'?: string
 }
 
-export function MetricCard({ title, value, change, icon: Icon, className }: MetricCardProps) {
+export function MetricCard({ title, value, change, icon: Icon, className, 'data-testid': dataTestId }: MetricCardProps) {
   const getChangeColor = (type: string) => {
     switch (type) {
       case 'increase':
@@ -187,7 +188,7 @@ export function MetricCard({ title, value, change, icon: Icon, className }: Metr
   }
 
   return (
-    <div className={cn('card', className)}>
+    <div className={cn('card', className)} data-testid={dataTestId}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>

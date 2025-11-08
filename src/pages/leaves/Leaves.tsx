@@ -2,171 +2,187 @@ import { useState, useEffect } from 'react'
 import {
   PlusIcon,
   PencilIcon,
+  TrashIcon,
   EyeIcon,
+  CalendarDaysIcon,
+  MagnifyingGlassIcon,
+  FunnelIcon,
+  ArrowDownTrayIcon,
   CheckCircleIcon,
   XCircleIcon,
-  ClockIcon,
-  CalendarDaysIcon,
-  UserIcon,
-  ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline'
 import DataTable, { TableColumn } from '@/components/ui/DataTable'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Input from '@/components/ui/Input'
 import Select from '@/components/ui/Select'
-import { useAppStore } from '@/store'
-import { Leave, Employee } from '@/types'
-import { formatDate, getStatusColor, calculateDaysDifference } from '@/utils'
+import Textarea from '@/components/ui/Textarea'
+import { formatDate } from '@/utils'
+
+interface Leave {
+  id: string
+  employeeName: string
+  employeeId: string
+  type: 'annual' | 'sick' | 'maternity' | 'paternity' | 'personal' | 'other'
+  startDate: string
+  endDate: string
+  days: number
+  reason: string
+  status: 'pending' | 'approved' | 'rejected' | 'cancelled'
+  appliedDate: string
+  approvedBy?: string
+  approvedDate?: string
+}
 
 export default function Leaves() {
-  const { employees } = useAppStore()
   const [leaves, setLeaves] = useState<Leave[]>([])
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [editingLeave, setEditingLeave] = useState<Leave | null>(null)
   const [formData, setFormData] = useState({
+    employeeName: '',
     employeeId: '',
-    type: 'annual' as const,
+    type: 'annual' as Leave['type'],
     startDate: '',
     endDate: '',
     reason: '',
-    status: 'pending' as const,
+    status: 'pending' as Leave['status'],
   })
+
+  // Calculate days when dates change
+  useEffect(() => {
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate)
+      const end = new Date(formData.endDate)
+      if (start <= end) {
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+        // Days will be calculated in handleSubmit
+      }
+    }
+  }, [formData.startDate, formData.endDate])
 
   // Mock data - replace with API calls
   useEffect(() => {
-    const mockLeaves: Leave[] = [
-      {
-        id: '1',
-        employeeId: '1',
-        type: 'annual',
-        startDate: '2023-12-20',
-        endDate: '2023-12-22',
-        days: 3,
-        reason: 'Family vacation',
-        status: 'approved',
-        approverId: 'admin',
-        approvedAt: '2023-12-15T10:00:00Z',
-        createdAt: '2023-12-10T00:00:00Z',
-        updatedAt: '2023-12-15T10:00:00Z',
-      },
-      {
-        id: '2',
-        employeeId: '2',
-        type: 'sick',
-        startDate: '2023-12-18',
-        endDate: '2023-12-18',
-        days: 1,
-        reason: 'Medical appointment',
-        status: 'pending',
-        createdAt: '2023-12-15T00:00:00Z',
-        updatedAt: '2023-12-15T00:00:00Z',
-      },
-      {
-        id: '3',
-        employeeId: '3',
-        type: 'annual',
-        startDate: '2024-01-05',
-        endDate: '2024-01-12',
-        days: 8,
-        reason: 'Winter holiday',
-        status: 'pending',
-        createdAt: '2023-12-12T00:00:00Z',
-        updatedAt: '2023-12-12T00:00:00Z',
-      },
-      {
-        id: '4',
-        employeeId: '1',
-        type: 'maternity',
-        startDate: '2024-02-01',
-        endDate: '2024-05-01',
-        days: 90,
-        reason: 'Maternity leave',
-        status: 'approved',
-        approverId: 'admin',
-        approvedAt: '2023-12-01T14:30:00Z',
-        createdAt: '2023-11-15T00:00:00Z',
-        updatedAt: '2023-12-01T14:30:00Z',
-      },
-    ]
-    setLeaves(mockLeaves)
+    setLoading(true)
+    setTimeout(() => {
+      const mockLeaves: Leave[] = [
+        {
+          id: '1',
+          employeeName: 'John Doe',
+          employeeId: 'EMP001',
+          type: 'annual',
+          startDate: '2024-01-15',
+          endDate: '2024-01-20',
+          days: 6,
+          reason: 'Family vacation',
+          status: 'pending',
+          appliedDate: '2024-01-10',
+        },
+        {
+          id: '2',
+          employeeName: 'Jane Smith',
+          employeeId: 'EMP002',
+          type: 'sick',
+          startDate: '2024-01-12',
+          endDate: '2024-01-12',
+          days: 1,
+          reason: 'Medical appointment',
+          status: 'approved',
+          appliedDate: '2024-01-11',
+          approvedBy: 'Manager',
+          approvedDate: '2024-01-11',
+        },
+        {
+          id: '3',
+          employeeName: 'Mike Johnson',
+          employeeId: 'EMP003',
+          type: 'personal',
+          startDate: '2024-01-18',
+          endDate: '2024-01-18',
+          days: 1,
+          reason: 'Personal matter',
+          status: 'rejected',
+          appliedDate: '2024-01-14',
+          approvedBy: 'Manager',
+          approvedDate: '2024-01-15',
+        },
+      ]
+      setLeaves(mockLeaves)
+      setLoading(false)
+    }, 500)
   }, [])
 
   const columns: TableColumn<Leave>[] = [
     {
-      key: 'employee',
+      key: 'employeeName',
       label: 'Employee',
-      render: (_, leave) => {
-        const employee = employees.find(e => e.id === leave.employeeId)
-        return employee ? (
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center">
-              <span className="text-white text-xs font-medium">
-                {employee.firstName[0]}{employee.lastName[0]}
-              </span>
-            </div>
-            <div className="ml-2">
-              <div className="text-sm font-medium text-gray-900">
-                {employee.firstName} {employee.lastName}
-              </div>
-              <div className="text-sm text-gray-500">{employee.email}</div>
-            </div>
-          </div>
-        ) : 'Unknown Employee'
-      },
+      sortable: true,
+      filterable: true,
+      render: (value, leave) => (
+        <div>
+          <div className="text-sm font-medium text-gray-900">{value}</div>
+          <div className="text-sm text-gray-500">{leave.employeeId}</div>
+        </div>
+      ),
     },
     {
       key: 'type',
-      label: 'Leave Type',
+      label: 'Type',
+      sortable: true,
       render: (value) => (
         <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 capitalize">
-          {value?.replace('-', ' ')}
+          {value}
         </span>
       ),
     },
     {
-      key: 'dateRange',
-      label: 'Date Range',
-      render: (_, leave) => (
-        <div>
-          <div className="text-sm text-gray-900">
-            {formatDate(leave.startDate)} - {formatDate(leave.endDate)}
-          </div>
-          <div className="text-sm text-gray-500">
-            {leave.days} day{leave.days !== 1 ? 's' : ''}
-          </div>
-        </div>
-      ),
+      key: 'startDate',
+      label: 'Start Date',
+      sortable: true,
+      render: (value) => formatDate(value),
     },
     {
-      key: 'reason',
-      label: 'Reason',
-      render: (value) => (
-        <div className="max-w-xs truncate text-sm text-gray-900" title={value}>
-          {value}
-        </div>
-      ),
+      key: 'endDate',
+      label: 'End Date',
+      sortable: true,
+      render: (value) => formatDate(value),
+    },
+    {
+      key: 'days',
+      label: 'Days',
+      sortable: true,
+      align: 'center',
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
-          {value?.charAt(0).toUpperCase() + value?.slice(1)}
-        </span>
-      ),
+      sortable: true,
+      render: (value) => {
+        const colors = {
+          pending: 'bg-yellow-100 text-yellow-800',
+          approved: 'bg-green-100 text-green-800',
+          rejected: 'bg-red-100 text-red-800',
+          cancelled: 'bg-gray-100 text-gray-800',
+        }
+        return (
+          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full capitalize ${colors[value as keyof typeof colors]}`}>
+            {value}
+          </span>
+        )
+      },
     },
     {
-      key: 'approvedAt',
-      label: 'Approved Date',
-      render: (value) => value ? formatDate(value) : '-',
+      key: 'appliedDate',
+      label: 'Applied',
+      sortable: true,
+      render: (value) => formatDate(value),
     },
   ]
 
   const handleAddLeave = () => {
     setEditingLeave(null)
     setFormData({
+      employeeName: '',
       employeeId: '',
       type: 'annual',
       startDate: '',
@@ -180,6 +196,7 @@ export default function Leaves() {
   const handleEditLeave = (leave: Leave) => {
     setEditingLeave(leave)
     setFormData({
+      employeeName: leave.employeeName,
       employeeId: leave.employeeId,
       type: leave.type,
       startDate: leave.startDate,
@@ -190,43 +207,49 @@ export default function Leaves() {
     setShowModal(true)
   }
 
+  const handleDeleteLeave = (leave: Leave) => {
+    if (window.confirm(`Are you sure you want to delete this leave request?`)) {
+      setLeaves(prev => prev.filter(l => l.id !== leave.id))
+    }
+  }
+
   const handleApproveLeave = (leave: Leave) => {
     setLeaves(prev => prev.map(l =>
       l.id === leave.id
         ? {
             ...l,
             status: 'approved',
-            approverId: 'admin', // In real app, this would be current user
-            approvedAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            approvedBy: 'Manager',
+            approvedDate: new Date().toISOString().split('T')[0]
           }
         : l
     ))
   }
 
   const handleRejectLeave = (leave: Leave) => {
-    const reason = prompt('Please provide a reason for rejection:')
-    if (reason !== null) {
-      setLeaves(prev => prev.map(l =>
-        l.id === leave.id
-          ? {
-              ...l,
-              status: 'rejected',
-              updatedAt: new Date().toISOString()
-            }
-          : l
-      ))
-    }
+    setLeaves(prev => prev.map(l =>
+      l.id === leave.id
+        ? {
+            ...l,
+            status: 'rejected',
+            approvedBy: 'Manager',
+            approvedDate: new Date().toISOString().split('T')[0]
+          }
+        : l
+    ))
   }
 
   const handleSubmit = () => {
-    const days = calculateDaysDifference(formData.startDate, formData.endDate) + 1
+    // Calculate days between start and end date
+    const start = new Date(formData.startDate)
+    const end = new Date(formData.endDate)
+    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
     if (editingLeave) {
       // Update existing leave
       setLeaves(prev => prev.map(l =>
         l.id === editingLeave.id
-          ? { ...l, ...formData, days, updatedAt: new Date().toISOString() }
+          ? { ...l, ...formData, days }
           : l
       ))
     } else {
@@ -235,8 +258,7 @@ export default function Leaves() {
         id: Date.now().toString(),
         ...formData,
         days,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        appliedDate: new Date().toISOString().split('T')[0],
       }
       setLeaves(prev => [...prev, newLeave])
     }
@@ -247,25 +269,6 @@ export default function Leaves() {
     console.log('Exporting leaves...')
     // In real implementation, this would export to CSV/Excel
   }
-
-  const employeeOptions = employees.map(employee => ({
-    value: employee.id,
-    label: `${employee.firstName} ${employee.lastName}`,
-  }))
-
-  // Statistics
-  const totalLeaves = leaves.length
-  const pendingLeaves = leaves.filter(l => l.status === 'pending')
-  const approvedLeaves = leaves.filter(l => l.status === 'approved')
-  const totalDays = leaves
-    .filter(l => l.status === 'approved')
-    .reduce((sum, l) => sum + l.days, 0)
-
-  // Leave types distribution
-  const leaveTypes = leaves.reduce((acc, leave) => {
-    acc[leave.type] = (acc[leave.type] || 0) + 1
-    return acc
-  }, {} as Record<string, number>)
 
   return (
     <div className="space-y-6">
@@ -286,7 +289,7 @@ export default function Leaves() {
           </Button>
           <Button onClick={handleAddLeave}>
             <PlusIcon className="h-4 w-4 mr-2" />
-            Request Leave
+            Add Leave
           </Button>
         </div>
       </div>
@@ -304,7 +307,7 @@ export default function Leaves() {
                   Total Requests
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {totalLeaves}
+                  {leaves.length}
                 </dd>
               </dl>
             </div>
@@ -316,17 +319,17 @@ export default function Leaves() {
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
                 <span className="text-yellow-600 text-sm font-medium">
-                  {pendingLeaves.length}
+                  {leaves.filter(l => l.status === 'pending').length}
                 </span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium text-gray-500 truncate">
-                  Pending Approval
+                  Pending
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {pendingLeaves.length}
+                  {leaves.filter(l => l.status === 'pending').length}
                 </dd>
               </dl>
             </div>
@@ -338,7 +341,7 @@ export default function Leaves() {
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
                 <span className="text-green-600 text-sm font-medium">
-                  {approvedLeaves.length}
+                  {leaves.filter(l => l.status === 'approved').length}
                 </span>
               </div>
             </div>
@@ -348,7 +351,7 @@ export default function Leaves() {
                   Approved
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {approvedLeaves.length}
+                  {leaves.filter(l => l.status === 'approved').length}
                 </dd>
               </dl>
             </div>
@@ -358,36 +361,23 @@ export default function Leaves() {
         <div className="card">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center">
-                <span className="text-blue-600 text-sm font-medium">
-                  {totalDays}
+              <div className="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
+                <span className="text-red-600 text-sm font-medium">
+                  {leaves.filter(l => l.status === 'rejected').length}
                 </span>
               </div>
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
                 <dt className="text-sm font-medium text-gray-500 truncate">
-                  Total Leave Days
+                  Rejected
                 </dt>
                 <dd className="text-lg font-medium text-gray-900">
-                  {totalDays}
+                  {leaves.filter(l => l.status === 'rejected').length}
                 </dd>
               </dl>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Leave Types Overview */}
-      <div className="card">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Leave Types Distribution</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(leaveTypes).map(([type, count]) => (
-            <div key={type} className="text-center">
-              <div className="text-2xl font-bold text-gray-900">{count}</div>
-              <div className="text-sm text-gray-500 capitalize">{type.replace('-', ' ')}</div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -410,6 +400,7 @@ export default function Leaves() {
                     size="sm"
                     onClick={() => handleApproveLeave(leave)}
                     className="text-green-600 hover:text-green-700"
+                    data-testid={`approve-leave-${leave.id}`}
                   >
                     <CheckCircleIcon className="h-4 w-4" />
                   </Button>
@@ -418,6 +409,7 @@ export default function Leaves() {
                     size="sm"
                     onClick={() => handleRejectLeave(leave)}
                     className="text-red-600 hover:text-red-700"
+                    data-testid={`reject-leave-${leave.id}`}
                   >
                     <XCircleIcon className="h-4 w-4" />
                   </Button>
@@ -427,12 +419,21 @@ export default function Leaves() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleEditLeave(leave)}
+                data-testid={`edit-leave-${leave.id}`}
               >
                 <PencilIcon className="h-4 w-4" />
               </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDeleteLeave(leave)}
+                data-testid={`delete-leave-${leave.id}`}
+              >
+                <TrashIcon className="h-4 w-4" />
+              </Button>
             </div>
           )}
-          emptyMessage="No leave requests found. Create your first leave request."
+          emptyMessage="No leave requests found. Add your first leave request to get started."
           data-testid="leaves-table"
         />
       </div>
@@ -441,33 +442,56 @@ export default function Leaves() {
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title={editingLeave ? 'Edit Leave Request' : 'New Leave Request'}
-        size="md"
+        title={editingLeave ? 'Edit Leave Request' : 'Add Leave Request'}
+        size="lg"
       >
         <div className="space-y-6">
-          <Select
-            label="Employee"
-            options={employeeOptions}
-            value={formData.employeeId}
-            onChange={(value) => setFormData(prev => ({ ...prev, employeeId: value }))}
-            placeholder="Select employee"
-            required
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="Employee Name"
+              value={formData.employeeName}
+              onChange={(e) => setFormData(prev => ({ ...prev, employeeName: e.target.value }))}
+              required
+            />
 
-          <Select
-            label="Leave Type"
-            options={[
-              { value: 'annual', label: 'Annual Leave' },
-              { value: 'sick', label: 'Sick Leave' },
-              { value: 'maternity', label: 'Maternity Leave' },
-              { value: 'paternity', label: 'Paternity Leave' },
-              { value: 'unpaid', label: 'Unpaid Leave' },
-              { value: 'other', label: 'Other' },
-            ]}
-            value={formData.type}
-            onChange={(value) => setFormData(prev => ({ ...prev, type: value as any }))}
-            required
-          />
+            <Input
+              label="Employee ID"
+              value={formData.employeeId}
+              onChange={(e) => setFormData(prev => ({ ...prev, employeeId: e.target.value }))}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Select
+              label="Leave Type"
+              options={[
+                { value: 'annual', label: 'Annual Leave' },
+                { value: 'sick', label: 'Sick Leave' },
+                { value: 'maternity', label: 'Maternity Leave' },
+                { value: 'paternity', label: 'Paternity Leave' },
+                { value: 'personal', label: 'Personal Leave' },
+                { value: 'other', label: 'Other' },
+              ]}
+              value={formData.type}
+              onChange={(value) => setFormData(prev => ({ ...prev, type: value as Leave['type'] }))}
+              required
+              data-testid="leave-type"
+            />
+
+            <Select
+              label="Status"
+              options={[
+                { value: 'pending', label: 'Pending' },
+                { value: 'approved', label: 'Approved' },
+                { value: 'rejected', label: 'Rejected' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ]}
+              value={formData.status}
+              onChange={(value) => setFormData(prev => ({ ...prev, status: value as Leave['status'] }))}
+              required
+            />
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -476,6 +500,7 @@ export default function Leaves() {
               value={formData.startDate}
               onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
               required
+              data-testid="start-date"
             />
 
             <Input
@@ -484,51 +509,26 @@ export default function Leaves() {
               value={formData.endDate}
               onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
               required
+              data-testid="end-date"
             />
           </div>
 
-          {formData.startDate && formData.endDate && (
-            <div className="bg-gray-50 p-3 rounded-md">
-              <p className="text-sm text-gray-600">
-                Duration: {calculateDaysDifference(formData.startDate, formData.endDate) + 1} days
-              </p>
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Reason
-            </label>
-            <textarea
-              className="input w-full h-24 resize-none"
-              placeholder="Please provide a reason for your leave request..."
-              value={formData.reason}
-              onChange={(e) => setFormData(prev => ({ ...prev, reason: e.target.value }))}
-              required
-            />
-          </div>
-
-          {editingLeave && (
-            <Select
-              label="Status"
-              options={[
-                { value: 'pending', label: 'Pending' },
-                { value: 'approved', label: 'Approved' },
-                { value: 'rejected', label: 'Rejected' },
-              ]}
-              value={formData.status}
-              onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
-              required
-            />
-          )}
+          <Textarea
+            label="Reason"
+            value={formData.reason}
+            onChange={(e) => setFormData(prev => ({ ...prev, reason: e.target.value }))}
+            rows={3}
+            required
+            data-testid="leave-reason"
+          />
         </div>
 
         <div className="flex justify-end space-x-3 mt-6">
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
-            {editingLeave ? 'Update Request' : 'Submit Request'}
+          <Button onClick={handleSubmit} data-testid="submit-leave">
+            {editingLeave ? 'Update Leave' : 'Submit Leave'}
           </Button>
         </div>
       </Modal>
