@@ -18,7 +18,7 @@ import { Attendance, Employee } from '@/types'
 import { formatDate, formatDateTime, getStatusColor } from '@/utils'
 
 export default function Attendances() {
-  const { employees } = useAppStore()
+  const { employees = [] } = useAppStore() as any
   const [attendances, setAttendances] = useState<Attendance[]>([])
   const [loading, setLoading] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -77,14 +77,21 @@ export default function Attendances() {
           breakTime,
           totalHours,
           status: randomStatus,
-          notes: randomStatus === 'late' ? 'Traffic delay' : randomStatus === 'half-day' ? 'Doctor appointment' : '',
+          notes:
+            randomStatus === 'late'
+              ? 'Traffic delay'
+              : randomStatus === 'half-day'
+                ? 'Doctor appointment'
+                : '',
           createdAt: date.toISOString(),
           updatedAt: date.toISOString(),
         })
       }
     })
 
-    setAttendances(mockAttendances.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()))
+    setAttendances(
+      mockAttendances.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    )
   }, [employees])
 
   const columns: TableColumn<Attendance>[] = [
@@ -97,7 +104,8 @@ export default function Attendances() {
           <div className="flex items-center">
             <div className="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center">
               <span className="text-white text-xs font-medium">
-                {employee.firstName[0]}{employee.lastName[0]}
+                {employee.firstName[0]}
+                {employee.lastName[0]}
               </span>
             </div>
             <div className="ml-2">
@@ -107,39 +115,43 @@ export default function Attendances() {
               <div className="text-sm text-gray-500">{employee.email}</div>
             </div>
           </div>
-        ) : 'Unknown Employee'
+        ) : (
+          'Unknown Employee'
+        )
       },
     },
     {
       key: 'date',
       label: 'Date',
-      render: (value) => formatDate(value),
+      render: value => formatDate(value),
     },
     {
       key: 'checkIn',
       label: 'Check In',
-      render: (value) => value ? formatDateTime(value).split(', ')[1] : '-',
+      render: value => (value ? formatDateTime(value).split(', ')[1] : '-'),
     },
     {
       key: 'checkOut',
       label: 'Check Out',
-      render: (value) => value ? formatDateTime(value).split(', ')[1] : '-',
+      render: value => (value ? formatDateTime(value).split(', ')[1] : '-'),
     },
     {
       key: 'totalHours',
       label: 'Total Hours',
-      render: (value) => value ? `${value}h` : '-',
+      render: value => (value ? `${value}h` : '-'),
     },
     {
       key: 'breakTime',
       label: 'Break Time',
-      render: (value) => value ? `${value}h` : '-',
+      render: value => (value ? `${value}h` : '-'),
     },
     {
       key: 'status',
       label: 'Status',
-      render: (value) => (
-        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}>
+      render: value => (
+        <span
+          className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(value)}`}
+        >
           {value?.charAt(0).toUpperCase() + value?.slice(1)}
         </span>
       ),
@@ -147,7 +159,7 @@ export default function Attendances() {
     {
       key: 'notes',
       label: 'Notes',
-      render: (value) => (
+      render: value => (
         <div className="max-w-xs truncate text-sm text-gray-900" title={value}>
           {value || '-'}
         </div>
@@ -198,19 +210,21 @@ export default function Attendances() {
 
     if (editingAttendance) {
       // Update existing attendance
-      setAttendances(prev => prev.map(a =>
-        a.id === editingAttendance.id
-          ? {
-              ...a,
-              ...formData,
-              checkIn: checkInDateTime,
-              checkOut: checkOutDateTime,
-              totalHours,
-              breakTime,
-              updatedAt: new Date().toISOString()
-            }
-          : a
-      ))
+      setAttendances(prev =>
+        prev.map(a =>
+          a.id === editingAttendance.id
+            ? {
+                ...a,
+                ...formData,
+                checkIn: checkInDateTime,
+                checkOut: checkOutDateTime,
+                totalHours,
+                breakTime,
+                updatedAt: new Date().toISOString(),
+              }
+            : a
+        )
+      )
     } else {
       // Add new attendance
       const newAttendance: Attendance = {
@@ -233,7 +247,7 @@ export default function Attendances() {
     // In real implementation, this would export to CSV/Excel
   }
 
-  const employeeOptions = employees.map(employee => ({
+  const employeeOptions = (employees || []).map(employee => ({
     value: employee.id,
     label: `${employee.firstName} ${employee.lastName}`,
   }))
@@ -248,16 +262,23 @@ export default function Attendances() {
   const thisMonthAttendances = attendances.filter(a => {
     const attendanceDate = new Date(a.date)
     const now = new Date()
-    return attendanceDate.getMonth() === now.getMonth() && attendanceDate.getFullYear() === now.getFullYear()
+    return (
+      attendanceDate.getMonth() === now.getMonth() &&
+      attendanceDate.getFullYear() === now.getFullYear()
+    )
   })
 
-  const averageHoursThisMonth = thisMonthAttendances.length > 0
-    ? thisMonthAttendances.reduce((sum, a) => sum + a.totalHours, 0) / thisMonthAttendances.length
-    : 0
+  const averageHoursThisMonth =
+    thisMonthAttendances.length > 0
+      ? thisMonthAttendances.reduce((sum, a) => sum + a.totalHours, 0) / thisMonthAttendances.length
+      : 0
 
-  const onTimePercentage = thisMonthAttendances.length > 0
-    ? (thisMonthAttendances.filter(a => a.status === 'present').length / thisMonthAttendances.length) * 100
-    : 0
+  const onTimePercentage =
+    thisMonthAttendances.length > 0
+      ? (thisMonthAttendances.filter(a => a.status === 'present').length /
+          thisMonthAttendances.length) *
+        100
+      : 0
 
   return (
     <div className="space-y-6">
@@ -292,12 +313,8 @@ export default function Attendances() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Present Today
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {presentToday}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Present Today</dt>
+                <dd className="text-lg font-medium text-gray-900">{presentToday}</dd>
               </dl>
             </div>
           </div>
@@ -310,12 +327,8 @@ export default function Attendances() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Absent Today
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {absentToday}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Absent Today</dt>
+                <dd className="text-lg font-medium text-gray-900">{absentToday}</dd>
               </dl>
             </div>
           </div>
@@ -328,12 +341,8 @@ export default function Attendances() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Late Today
-                </dt>
-                <dd className="text-lg font-medium text-gray-900">
-                  {lateToday}
-                </dd>
+                <dt className="text-sm font-medium text-gray-500 truncate">Late Today</dt>
+                <dd className="text-lg font-medium text-gray-900">{lateToday}</dd>
               </dl>
             </div>
           </div>
@@ -346,9 +355,7 @@ export default function Attendances() {
             </div>
             <div className="ml-5 w-0 flex-1">
               <dl>
-                <dt className="text-sm font-medium text-gray-500 truncate">
-                  Avg Hours/Month
-                </dt>
+                <dt className="text-sm font-medium text-gray-500 truncate">Avg Hours/Month</dt>
                 <dd className="text-lg font-medium text-gray-900">
                   {averageHoursThisMonth.toFixed(1)}h
                 </dd>
@@ -395,13 +402,9 @@ export default function Attendances() {
           filterable
           sortable
           pagination={{ enabled: true }}
-          actions={(attendance) => (
+          actions={attendance => (
             <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleEditAttendance(attendance)}
-              >
+              <Button variant="ghost" size="sm" onClick={() => handleEditAttendance(attendance)}>
                 <ClockIcon className="h-4 w-4" />
               </Button>
             </div>
@@ -422,7 +425,7 @@ export default function Attendances() {
             label="Employee"
             options={employeeOptions}
             value={formData.employeeId}
-            onChange={(value) => setFormData(prev => ({ ...prev, employeeId: value }))}
+            onChange={value => setFormData(prev => ({ ...prev, employeeId: value }))}
             placeholder="Select employee"
             required
           />
@@ -431,7 +434,7 @@ export default function Attendances() {
             label="Date"
             type="date"
             value={formData.date}
-            onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+            onChange={e => setFormData(prev => ({ ...prev, date: e.target.value }))}
             required
           />
 
@@ -440,14 +443,14 @@ export default function Attendances() {
               label="Check In Time"
               type="time"
               value={formData.checkIn}
-              onChange={(e) => setFormData(prev => ({ ...prev, checkIn: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, checkIn: e.target.value }))}
             />
 
             <Input
               label="Check Out Time"
               type="time"
               value={formData.checkOut}
-              onChange={(e) => setFormData(prev => ({ ...prev, checkOut: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, checkOut: e.target.value }))}
             />
           </div>
 
@@ -460,19 +463,17 @@ export default function Attendances() {
               { value: 'half-day', label: 'Half Day' },
             ]}
             value={formData.status}
-            onChange={(value) => setFormData(prev => ({ ...prev, status: value as any }))}
+            onChange={value => setFormData(prev => ({ ...prev, status: value as any }))}
             required
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
             <textarea
               className="input w-full h-24 resize-none"
               placeholder="Additional notes about attendance..."
               value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
             />
           </div>
         </div>
